@@ -25,8 +25,8 @@ public class WordRank extends JavaPlugin{
 	    }	    
 	    Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");	    
 	    if (permissionsPlugin == null) {
-	        System.out.println("Permissions not detected, disabling HarderMob!");
-	        Plugin plugin = this.getServer().getPluginManager().getPlugin("HarderMob");
+	        System.out.println("Permissions not detected, disabling WordRank!");
+	        Plugin plugin = this.getServer().getPluginManager().getPlugin("WordRank");
 	        this.getServer().getPluginManager().disablePlugin(plugin);	        
 	        return;
 	    }
