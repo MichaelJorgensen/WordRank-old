@@ -2,6 +2,8 @@ package com.lala.wordrank;
 
 import java.io.File;
 
+import org.bukkit.event.Event.Priority;
+import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +16,7 @@ public class WordRank extends JavaPlugin{
 	public void onEnable(){
 		data = getDataFolder();
 		setupPermissions();
+		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new Chat(this), Priority.Normal, this);
 		System.out.println("[WordRank] Enabled!");
 	}
 	public void onDisable(){
