@@ -1,5 +1,6 @@
 package com.lala.wordrank;
 
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
 
 public class Chat extends PlayerListener{
@@ -8,5 +9,7 @@ public class Chat extends PlayerListener{
 	public Chat(WordRank plugin){
 		this.plugin = plugin;
 	}
-	
+	public void onPlayerChat(PlayerChatEvent event){
+		
+	}
 }
