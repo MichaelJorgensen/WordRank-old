@@ -44,6 +44,7 @@ public class W implements CommandExecutor{
 					String word = args[1];
 					if (Config.exists(word)){
 						Config.remove(word);
+						sender.sendMessage(ChatColor.GREEN + "Word removed!");
 						return true;
 					}else{
 						sender.sendMessage(ChatColor.RED + "That word doesn't exist!");
