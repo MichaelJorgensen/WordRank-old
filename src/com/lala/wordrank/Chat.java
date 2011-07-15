@@ -12,7 +12,7 @@ public class Chat extends PlayerListener{
 		this.plugin = plugin;
 	}
 	public void onPlayerChat(PlayerChatEvent event){
-		if (Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank.say")){
+		if (Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank.say") || Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank." + event.getMessage())){
 			Player player = event.getPlayer();
 			if (WordRank.permissionHandler.inGroup(player.getWorld().getName(), player.getName(), Config.getWordGroup(event.getMessage()))){
 				player.sendMessage(ChatColor.RED + "You can't use a magic word for a group you are already in!");
@@ -23,6 +23,9 @@ public class Chat extends PlayerListener{
 				event.setCancelled(true);
 				return;
 			}
+		}else{
+			event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that!");
+			return;
 		}
 	}
 }
