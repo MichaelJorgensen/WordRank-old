@@ -13,11 +13,16 @@ public class Chat extends PlayerListener{
 	}
 	public void onPlayerChat(PlayerChatEvent event){
 		if (Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank.say")){
-			Player player = event.getPlayer();			
-			Config.addParent(event.getPlayer(), Config.getWordGroup(event.getMessage()));
-			player.sendMessage(ChatColor.GOLD + Config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", Config.getWordGroup(event.getMessage())));
-			event.setCancelled(true);
-			return;
+			Player player = event.getPlayer();
+			if (WordRank.permissionHandler.inGroup(player.getWorld().getName(), player.getName(), Config.getWordGroup(event.getMessage())) == false){
+				player.sendMessage(ChatColor.RED + "You can't use a magic word for a group you are already in!");
+				return;
+			}else{
+				Config.addParent(event.getPlayer(), Config.getWordGroup(event.getMessage()));
+				player.sendMessage(ChatColor.GOLD + Config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", Config.getWordGroup(event.getMessage())));
+				event.setCancelled(true);
+				return;
+			}
 		}
 	}
 }
