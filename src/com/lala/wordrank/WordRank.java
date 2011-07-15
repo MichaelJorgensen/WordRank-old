@@ -13,10 +13,13 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 public class WordRank extends JavaPlugin{
 	public static PermissionHandler permissionHandler;
 	public static File data;
+	private final W w = new W(this);
 	public void onEnable(){
 		data = getDataFolder();
 		setupPermissions();
 		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new Chat(this), Priority.Normal, this);
+		Config.loadPluginSettings();
+		getCommand("w").setExecutor(w);
 		System.out.println("[WordRank] Enabled!");
 	}
 	public void onDisable(){
