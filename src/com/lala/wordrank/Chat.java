@@ -24,8 +24,10 @@ public class Chat extends PlayerListener{
 				return;
 			}
 		}else{
-			event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that!");
-			return;
+			if (Config.exists(event.getMessage())){
+				event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to do that!");
+				return;
+			}
 		}
 	}
 }
