@@ -58,7 +58,7 @@ public class Config extends Configuration{
 	}
 	public static void remove(String word){
 		final Config yml = getYML();
-		yml.removeProperty("config.wordlist.word");
+		yml.removeProperty("config.wordlist." + word);
 		yml.save();
 		return;
 	}
