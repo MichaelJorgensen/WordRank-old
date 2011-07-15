@@ -12,10 +12,10 @@ public class Chat extends PlayerListener{
 		this.plugin = plugin;
 	}
 	public void onPlayerChat(PlayerChatEvent event){
-		if (Config.exists(event.getMessage())){
-			Player player = event.getPlayer();
-			Config.setGroup(event.getPlayer().getName(), event.getPlayer().getWorld(), Config.getWordGroup(event.getMessage()));
-			player.sendMessage(ChatColor.GOLD + Config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", Config.getWordGroup(event.getMessage()).replaceAll("%word%", event.getMessage())));
+		if (Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank.say")){
+			Player player = event.getPlayer();			
+			Config.addParent(event.getPlayer(), Config.getWordGroup(event.getMessage()));
+			player.sendMessage(ChatColor.GOLD + Config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", Config.getWordGroup(event.getMessage())));
 			event.setCancelled(true);
 			return;
 		}

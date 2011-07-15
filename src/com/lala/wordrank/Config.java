@@ -3,7 +3,11 @@ package com.lala.wordrank;
 import java.io.File;
 
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
+
+import com.nijiko.permissions.Group;
+import com.nijiko.permissions.User;
 
 public class Config extends Configuration{
 	public Config(File file){
@@ -21,17 +25,6 @@ public class Config extends Configuration{
 		}
 		return yml;	
 	}
-	private static Config getPYML(String world){
-		File d = new File("/plugins/Permissions/" + world + "/users.yml");		
-		if (!d.exists()){
-			d.mkdirs();
-		}
-		final Config yml = new Config(d);
-		if (d.exists()){
-			yml.load();
-		}
-		return yml;	
-	}
 	private static Config getGYML(String world){
 		File d = new File("/plugins/Permissions/" + world + "/groups.yml");		
 		if (!d.exists()){
@@ -42,12 +35,6 @@ public class Config extends Configuration{
 			yml.load();
 		}
 		return yml;	
-	}
-	public static void setGroup(String p, World world, String group){
-		final Config yml = getPYML(world.getName());
-		yml.setProperty("users." + p + ".groups", group);
-		yml.save();
-		WordRank.permissionHandler.reload();
 	}
 	public static void addWord(String word, String group){
 		final Config yml = getYML();
@@ -87,21 +74,28 @@ public class Config extends Configuration{
 	}
 	public static void loadPluginSettings(){
 		final Config yml = getYML();
-		yml.getString("config.congrats-msg", "Congrats %player%! You are now in the group %group% for saying %word%");
+		yml.getString("config.congrats-msg", "Congrats %player%! You are now in the group %group%");
 		yml.save();
 	}
 	public static String getCongratsMsg(){
 		final Config yml = getYML();
-		String c = yml.getString("config.congrats-msg", "Congrats %player%! You are now in the group %group% for saying %word%");
+		String c = yml.getString("config.congrats-msg", "Congrats %player%! You are now in the group %group%");
 		return c;
 	}
 	public static boolean groupExists(String group, World world){
 		final Config yml = getGYML(world.getName());
-		Object o = yml.getProperty("groups." + group);
+		Object o = yml.getString("groups." + group, "");
 		if (o != null){
 			return true;
 		}else{
 			return false;
 		}
+	}
+	public static boolean addParent(Player player, String group) {
+		User user = WordRank.permissionHandler.getUserObject(player.getWorld().getName(), player.getName());
+		Group groups = WordRank.permissionHandler.getGroupObject(player.getWorld().getName(), group);
+		user.addParent(groups);
+		WordRank.permissionHandler.reload();
+		return true;
 	}
 }
