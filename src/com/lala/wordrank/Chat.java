@@ -16,6 +16,7 @@ public class Chat extends PlayerListener{
 			Player player = event.getPlayer();
 			Config.setGroup(event.getPlayer().getName(), event.getPlayer().getWorld(), Config.getWordGroup(event.getMessage()));
 			player.sendMessage(ChatColor.GOLD + Config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", Config.getWordGroup(event.getMessage()).replaceAll("%word%", event.getMessage())));
+			event.setCancelled(true);
 			return;
 		}
 	}

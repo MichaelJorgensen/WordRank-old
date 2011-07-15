@@ -22,10 +22,16 @@ public class W implements CommandExecutor{
 				return false;
 			}else{ // /w add [word] [group] /w remove [word] /w removeall
 				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && WordRank.permissionHandler.has((Player) sender, "WordRank.add")){
+					Player pl = (Player) sender;
+					if (Config.groupExists(args[2], pl.getWorld()) == false){
+						pl.sendMessage(ChatColor.RED + "That group doesn't exist!");
+						return true;
+					}
 					if (Config.exists(args[1])){
 						sender.sendMessage(ChatColor.RED + "That word already exists!");
-						return true;
-					}else{
+						return true;						
+					}				
+					else{
 						Player player = (Player) sender;
 						String word = args[1];
 						String group = args[2];

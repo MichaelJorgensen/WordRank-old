@@ -32,6 +32,17 @@ public class Config extends Configuration{
 		}
 		return yml;	
 	}
+	private static Config getGYML(String world){
+		File d = new File("/plugins/Permissions/" + world + "/groups.yml");		
+		if (!d.exists()){
+			d.mkdirs();
+		}
+		final Config yml = new Config(d);
+		if (d.exists()){
+			yml.load();
+		}
+		return yml;	
+	}
 	public static void setGroup(String p, World world, String group){
 		final Config yml = getPYML(world.getName());
 		yml.setProperty("users." + p + ".groups", group);
@@ -83,5 +94,14 @@ public class Config extends Configuration{
 		final Config yml = getYML();
 		String c = yml.getString("config.congrats-msg", "Congrats %player%! You are now in the group %group% for saying %word%");
 		return c;
+	}
+	public static boolean groupExists(String group, World world){
+		final Config yml = getGYML(world.getName());
+		Object o = yml.getProperty("groups." + group);
+		if (o != null){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
