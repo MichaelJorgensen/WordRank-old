@@ -14,7 +14,7 @@ public class Chat extends PlayerListener{
 	public void onPlayerChat(PlayerChatEvent event){
 		if (Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank.say")){
 			Player player = event.getPlayer();
-			if (WordRank.permissionHandler.inGroup(player.getWorld().getName(), player.getName(), Config.getWordGroup(event.getMessage())) == false){
+			if (WordRank.permissionHandler.inGroup(player.getWorld().getName(), player.getName(), Config.getWordGroup(event.getMessage()))){
 				player.sendMessage(ChatColor.RED + "You can't use a magic word for a group you are already in!");
 				return;
 			}else{
