@@ -1,0 +1,57 @@
+package com.lala.wordrank;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class W implements CommandExecutor{
+	@SuppressWarnings("unused")
+	private WordRank plugin;
+	public W(WordRank plugin){
+		this.plugin = plugin;
+	}
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+		if (!(sender instanceof Player)){
+			sender.sendMessage("You need to be a player!");
+			return true;
+		}else{
+			if (args.length <= 0){
+				return false;
+			}else{ // /w add [word] [group] /w remove [word] /w removeall
+				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && WordRank.permissionHandler.has((Player) sender, "WordRank.add")){
+					if (Config.exists(args[1])){
+						sender.sendMessage(ChatColor.RED + "That word already exists!");
+						return true;
+					}else{
+						Player player = (Player) sender;
+						String word = args[1];
+						String group = args[2];
+						Config.addWord(word, group);
+						player.sendMessage(ChatColor.GREEN + "Word added! (" + word + " gives group " + group + ")");
+						return true;
+					}
+				}
+				else if (args[0].equalsIgnoreCase("remove") && args.length >= 2 && WordRank.permissionHandler.has((Player) sender, "WordRank.remove")){
+					String word = args[1];
+					if (Config.exists(word)){
+						Config.remove(word);
+						return true;
+					}else{
+						sender.sendMessage(ChatColor.RED + "That word doesn't exist!");
+						return true;
+					}
+				}
+				else if (args[0].equalsIgnoreCase("removeall") && args.length >= 1 && WordRank.permissionHandler.has((Player) sender, "WordRank.remove.all")){
+					Config.removeall();
+					sender.sendMessage(ChatColor.GREEN + "All words removed!");
+					return true;
+				}else{
+					return false;
+				}
+			}
+		}
+	}
+}

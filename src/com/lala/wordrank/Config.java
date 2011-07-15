@@ -35,4 +35,15 @@ public class Config extends Configuration{
 			return true;
 		}
 	}
+	public static void removeall(){
+		final Config yml = getYML();
+		yml.removeProperty("config.wordlist");
+		yml.save();
+	}
+	public static void remove(String word){
+		final Config yml = getYML();
+		yml.removeProperty("config.wordlist.word");
+		yml.save();
+		return;
+	}
 }
