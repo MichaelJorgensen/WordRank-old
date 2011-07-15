@@ -16,10 +16,10 @@ public class WordRank extends JavaPlugin{
 	private final W w = new W(this);
 	public void onEnable(){
 		data = getDataFolder();
-		setupPermissions();
-		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new Chat(this), Priority.Normal, this);
+		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new Chat(this), Priority.Normal, this);		
 		Config.loadPluginSettings();
 		getCommand("w").setExecutor(w);
+		setupPermissions();
 		System.out.println("[WordRank] Enabled!");
 	}
 	public void onDisable(){
