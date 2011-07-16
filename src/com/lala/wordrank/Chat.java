@@ -1,6 +1,7 @@
 package com.lala.wordrank;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -14,15 +15,16 @@ public class Chat extends PlayerListener{
 	public void onPlayerChat(PlayerChatEvent event){
 		if (Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank.say") || Config.exists(event.getMessage()) && WordRank.permissionHandler.has(event.getPlayer(), "WordRank." + event.getMessage())){
 			Player player = event.getPlayer();
-			if (WordRank.permissionHandler.inGroup(player.getWorld().getName(), player.getName(), Config.getWordGroup(event.getMessage()))){
+			if (WordRank.permissionHandler.inGroup(Config.getWordWorld(event.getMessage()).getName(), player.getName(), Config.getWordGroup(event.getMessage()))){
 				player.sendMessage(ChatColor.RED + "You can't use a magic word for a group you are already in!");
 				return;
 			}else{
-				String[] g = WordRank.permissionHandler.getGroups(player.getWorld().getName(), player.getName());				
+				World world = Config.getWordWorld(event.getMessage());	
+				String[] g = WordRank.permissionHandler.getGroups(world.getName(), player.getName());				
 				for (int i = g.length; i > 0; i--){
-					Config.removeParent(player, g[i - 1]);					
+					Config.removeParent(player, g[i - 1], event.getMessage());					
 				}
-				Config.addGroup(event.getPlayer(), Config.getWordGroup(event.getMessage()));
+				Config.addGroup(event.getPlayer(), Config.getWordGroup(event.getMessage()), event.getMessage());
 				player.sendMessage(ChatColor.GOLD + Config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", Config.getWordGroup(event.getMessage())));
 				event.setCancelled(true);
 				return;

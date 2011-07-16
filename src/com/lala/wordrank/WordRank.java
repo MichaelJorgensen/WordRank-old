@@ -2,6 +2,7 @@ package com.lala.wordrank;
 
 import java.io.File;
 
+import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.Plugin;
@@ -14,12 +15,14 @@ public class WordRank extends JavaPlugin{
 	public static PermissionHandler permissionHandler;
 	public static File data;
 	private final W w = new W(this);
+	public static Server server;
 	public void onEnable(){
 		data = getDataFolder();
 		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new Chat(this), Priority.Normal, this);		
 		Config.loadPluginSettings();
 		getCommand("w").setExecutor(w);
 		setupPermissions();
+		server = getServer();
 		System.out.println("[WordRank] Enabled!");
 	}
 	public void onDisable(){

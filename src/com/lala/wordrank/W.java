@@ -20,7 +20,7 @@ public class W implements CommandExecutor{
 		}else{
 			if (args.length <= 0){
 				return false;
-			}else{ // /w add [word] [group] /w remove [word] /w removeall
+			}else{ // /w add [word] [group] [world] /w remove [word] /w removeall
 				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && WordRank.permissionHandler.has((Player) sender, "WordRank.add")){
 					Player pl = (Player) sender;
 					if (Config.groupExists(args[2], pl.getWorld()) == false){
@@ -35,8 +35,10 @@ public class W implements CommandExecutor{
 						Player player = (Player) sender;
 						String word = args[1];
 						String group = args[2];
-						Config.addWord(word, group);
-						player.sendMessage(ChatColor.GREEN + "Word added! (" + word + " gives group " + group + ")");
+						String world = player.getWorld().getName();
+						if (args.length >= 4) world = args[3];
+						Config.addWord(word, group, world);
+						player.sendMessage(ChatColor.GREEN + "Word added! (" + word + " gives group " + group + " for world" + world + ")");
 						return true;
 					}
 				}

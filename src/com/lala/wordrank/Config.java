@@ -36,10 +36,17 @@ public class Config extends Configuration{
 		}
 		return yml;	
 	}
-	public static void addWord(String word, String group){
+	public static void addWord(String word, String group, String world){
 		final Config yml = getYML();
 		yml.setProperty("config.wordlist." + word + ".group", group);
+		yml.setProperty("config.wordlist." + word + ".world", world);
 		yml.save();
+	}
+	public static World getWordWorld(String word){
+		final Config yml = getYML();
+		String y = (String) yml.getProperty("config.wordlist." + word + ".world");
+		World w =  WordRank.server.getWorld(y);
+		return w;
 	}
 	public static boolean exists(String word){
 		final Config yml = getYML();
@@ -91,16 +98,16 @@ public class Config extends Configuration{
 			return false;
 		}
 	}
-	public static void addGroup(Player player, String group) {
-		User user = WordRank.permissionHandler.getUserObject(player.getWorld().getName(), player.getName());
-		Group groups = WordRank.permissionHandler.getGroupObject(player.getWorld().getName(), group);	
+	public static void addGroup(Player player, String group, String word) {
+		User user = WordRank.permissionHandler.getUserObject(Config.getWordWorld(word).getName(), player.getName());
+		Group groups = WordRank.permissionHandler.getGroupObject(Config.getWordWorld(word).getName(), group);	
 		user.addParent(groups);
 		WordRank.permissionHandler.reload();		
 		return;
 	}
-	public static void removeParent(Player player, String group) {
-		User user = WordRank.permissionHandler.getUserObject(player.getWorld().getName(),player.getName());
-		Group groups = WordRank.permissionHandler.getGroupObject(player.getWorld().getName(), group);		
+	public static void removeParent(Player player, String group, String word) {
+		User user = WordRank.permissionHandler.getUserObject(Config.getWordWorld(word).getName(),player.getName());
+		Group groups = WordRank.permissionHandler.getGroupObject(Config.getWordWorld(word).getName(), group);		
 		user.removeParent(groups);
 	}
 }
