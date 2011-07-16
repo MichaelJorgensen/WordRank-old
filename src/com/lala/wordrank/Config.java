@@ -91,11 +91,16 @@ public class Config extends Configuration{
 			return false;
 		}
 	}
-	public static boolean addParent(Player player, String group) {
+	public static void addGroup(Player player, String group) {
 		User user = WordRank.permissionHandler.getUserObject(player.getWorld().getName(), player.getName());
-		Group groups = WordRank.permissionHandler.getGroupObject(player.getWorld().getName(), group);
+		Group groups = WordRank.permissionHandler.getGroupObject(player.getWorld().getName(), group);	
 		user.addParent(groups);
-		WordRank.permissionHandler.reload();
-		return true;
+		WordRank.permissionHandler.reload();		
+		return;
+	}
+	public static void removeParent(Player player, String group) {
+		User user = WordRank.permissionHandler.getUserObject(player.getWorld().getName(),player.getName());
+		Group groups = WordRank.permissionHandler.getGroupObject(player.getWorld().getName(), group);		
+		user.removeParent(groups);
 	}
 }

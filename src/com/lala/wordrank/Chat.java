@@ -18,7 +18,11 @@ public class Chat extends PlayerListener{
 				player.sendMessage(ChatColor.RED + "You can't use a magic word for a group you are already in!");
 				return;
 			}else{
-				Config.addParent(event.getPlayer(), Config.getWordGroup(event.getMessage()));
+				String[] g = WordRank.permissionHandler.getGroups(player.getWorld().getName(), player.getName());				
+				for (int i = g.length; i > 0; i--){
+					Config.removeParent(player, g[i - 1]);					
+				}
+				Config.addGroup(event.getPlayer(), Config.getWordGroup(event.getMessage()));
 				player.sendMessage(ChatColor.GOLD + Config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", Config.getWordGroup(event.getMessage())));
 				event.setCancelled(true);
 				return;
