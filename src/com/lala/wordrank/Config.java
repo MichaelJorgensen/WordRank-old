@@ -1,55 +1,37 @@
 package com.lala.wordrank;
 
-import java.io.File;
+import java.util.List;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
-import com.nijiko.permissions.Group;
-import com.nijiko.permissions.User;
+import de.bananaco.permissions.interfaces.PermissionSet;
 
-public class Config extends Configuration{
-	public Config(File file){
-		super(file);		
+public class Config {
+	private final WordRank plugin;
+	
+	public Config(WordRank plugin){
+		this.plugin = plugin;
 	}
-	private static Config getYML(){
-		File d = WordRank.data;
-		final File yaml = new File(d, "config.yml");
-		if (!d.exists()){
-			d.mkdirs();
-		}
-		final Config yml = new Config(yaml);
-		if (yaml.exists()){
-			yml.load();
-		}
-		return yml;	
+	private Configuration getYML(){
+	return plugin.getConfiguration();	
 	}
-	private static Config getGYML(String world){
-		File d = new File("/plugins/Permissions/" + world + "/groups.yml");		
-		if (!d.exists()){
-			d.mkdirs();
-		}
-		final Config yml = new Config(d);
-		if (d.exists()){
-			yml.load();
-		}
-		return yml;	
-	}
-	public static void addWord(String word, String group, String world){
-		final Config yml = getYML();
+
+	public void addWord(String word, String group, String world){
+		final Configuration yml = getYML();
 		yml.setProperty("config.wordlist." + word + ".group", group);
 		yml.setProperty("config.wordlist." + word + ".world", world);
 		yml.save();
 	}
-	public static World getWordWorld(String word){
-		final Config yml = getYML();
+	public World getWordWorld(String word){
+		final Configuration yml = getYML();
 		String y = (String) yml.getProperty("config.wordlist." + word + ".world");
-		World w =  WordRank.server.getWorld(y);
+		World w =  plugin.getServer().getWorld(y);
 		return w;
 	}
-	public static boolean exists(String word){
-		final Config yml = getYML();
+	public boolean exists(String word){
+		final Configuration yml = getYML();
 		Object j;
 		j = yml.getProperty("config.wordlist." + word);
 		if (j == null){
@@ -58,19 +40,19 @@ public class Config extends Configuration{
 			return true;
 		}
 	}
-	public static void removeall(){
-		final Config yml = getYML();
+	public void removeall(){
+		final Configuration yml = getYML();
 		yml.removeProperty("config.wordlist");
 		yml.save();
 	}
-	public static void remove(String word){
-		final Config yml = getYML();
+	public void remove(String word){
+		final Configuration yml = getYML();
 		yml.removeProperty("config.wordlist." + word);
 		yml.save();
 		return;
 	}
-	public static String getWordGroup(String word){
-		final Config yml = getYML();
+	public String getWordGroup(String word){
+		final Configuration yml = getYML();
 		String f;
 		f = yml.getString("config.wordlist." + word + ".group");
 		if (f != null){
@@ -79,35 +61,27 @@ public class Config extends Configuration{
 			return null;
 		}
 	}
-	public static void loadPluginSettings(){
-		final Config yml = getYML();
+	public void loadPluginSettings(){
+		final Configuration yml = getYML();
 		yml.getString("config.congrats-msg", "Congrats %player%! You are now in the group %group%");
 		yml.save();
 	}
-	public static String getCongratsMsg(){
-		final Config yml = getYML();
+	public String getCongratsMsg(){
+		final Configuration yml = getYML();
 		String c = yml.getString("config.congrats-msg", "Congrats %player%! You are now in the group %group%");
 		return c;
 	}
-	public static boolean groupExists(String group, World world){
-		final Config yml = getGYML(world.getName());
-		Object o = yml.getString("groups." + group, "");
-		if (o != null){
-			return true;
-		}else{
-			return false;
-		}
+	public boolean groupExists(String group, World world){
+		PermissionSet ps = plugin.wpm.getPermissionSet(world);
+		List<String> groups = ps.getAllCachedGroups();
+		return groups.contains(group);
 	}
-	public static void addGroup(Player player, String group, String word) {
-		User user = WordRank.permissionHandler.getUserObject(Config.getWordWorld(word).getName(), player.getName());
-		Group groups = WordRank.permissionHandler.getGroupObject(Config.getWordWorld(word).getName(), group);	
-		user.addParent(groups);
-		WordRank.permissionHandler.reload();		
-		return;
+	public void addGroup(Player player, String group, String word) {
+		PermissionSet ps = plugin.wpm.getPermissionSet(getWordWorld(word));
+		ps.addGroup(player, group);
 	}
-	public static void removeParent(Player player, String group, String word) {
-		User user = WordRank.permissionHandler.getUserObject(Config.getWordWorld(word).getName(),player.getName());
-		Group groups = WordRank.permissionHandler.getGroupObject(Config.getWordWorld(word).getName(), group);		
-		user.removeParent(groups);
+	public void removeParent(Player player, String group, String word) {		
+		PermissionSet ps = plugin.wpm.getPermissionSet(getWordWorld(word));
+		ps.removeGroup(player, group);	
 	}
 }
