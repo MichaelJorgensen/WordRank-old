@@ -18,7 +18,7 @@ public class Chat extends PlayerListener{
 		this.config = plugin.config;
 	}
 	public boolean has(CommandSender sender, String permission) {
-	return sender.hasPermission(permission);
+		return sender.hasPermission(permission);
 	}
 	public boolean inGroup(Player player, String group) {
 		PermissionSet ps = plugin.wpm.getPermissionSet(player.getWorld());

@@ -1,5 +1,7 @@
 package com.lala.wordrank;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.World;
@@ -15,9 +17,19 @@ public class Config {
 		this.plugin = plugin;
 	}
 	private Configuration getYML(){
-	return plugin.getConfiguration();	
+		return plugin.getConfiguration();	
 	}
-
+	private Configuration getBYML(String worldname){
+		final File yaml = new File("plugins/bPermissions/worlds/"+worldname+".yml");
+		if (!yaml.exists()){
+			yaml.mkdirs();
+		}
+		final Configuration yml = new Configuration(yaml);
+		if (yaml.exists()){
+			yml.load();
+		}
+		return yml;
+	}
 	public void addWord(String word, String group, String world){
 		final Configuration yml = getYML();
 		yml.setProperty("config.wordlist." + word + ".group", group);
@@ -72,16 +84,20 @@ public class Config {
 		return c;
 	}
 	public boolean groupExists(String group, World world){
-		PermissionSet ps = plugin.wpm.getPermissionSet(world);
-		List<String> groups = ps.getAllCachedGroups();
+		final Configuration yml = getBYML(world.getName());
+		List<String> groups = yml.getKeys("groups");
 		return groups.contains(group);
 	}
 	public void addGroup(Player player, String group, String word) {
 		PermissionSet ps = plugin.wpm.getPermissionSet(getWordWorld(word));
 		ps.addGroup(player, group);
 	}
+	@SuppressWarnings("unchecked")
 	public void removeParent(Player player, String group, String word) {		
-		PermissionSet ps = plugin.wpm.getPermissionSet(getWordWorld(word));
-		ps.removeGroup(player, group);	
+		final Configuration yml = getBYML(player.getWorld().getName());
+		ArrayList<String> groups = (ArrayList<String>) yml.getProperty("players."+player.getName());
+		groups.remove(group);
+		yml.setProperty("players."+player.getName(), groups);
+		yml.save();
 	}
 }

@@ -17,7 +17,7 @@ public class W implements CommandExecutor{
 	}
 	
 	public boolean has(CommandSender sender, String permission) {
-	return sender.hasPermission(permission);
+		return sender.hasPermission(permission);
 	}
 	
 	@Override
@@ -28,10 +28,10 @@ public class W implements CommandExecutor{
 		}else{
 			if (args.length <= 0){
 				return false;
-			}else{ // /w add [word] [group] [world] /w remove [word] /w removeall
-				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && has(sender, "wordrank.add")){
+			}else{
+				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && has(sender, "WordRank.add")){
 					Player pl = (Player) sender;
-					if (config.groupExists(args[2], pl.getWorld()) == false){
+					if (!config.groupExists(args[2], pl.getWorld())){
 						pl.sendMessage(ChatColor.RED + "That group doesn't exist!");
 						return true;
 					}
