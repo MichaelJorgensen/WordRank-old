@@ -10,16 +10,16 @@ public class W implements CommandExecutor{
 	@SuppressWarnings("unused")
 	private WordRank plugin;
 	private Config config;
-	
+
 	public W(WordRank plugin){
 		this.plugin = plugin;
 		this.config = plugin.config;
 	}
-	
+
 	public boolean has(CommandSender sender, String permission) {
-		return sender.hasPermission(permission);
+	return sender.hasPermission(permission);
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (!(sender instanceof Player)){
@@ -28,10 +28,10 @@ public class W implements CommandExecutor{
 		}else{
 			if (args.length <= 0){
 				return false;
-			}else{
-				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && has(sender, "WordRank.add")){
+			}else{ // /w add [word] [group] [world] /w remove [word] /w removeall
+				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && has(sender, "wordrank.add")){
 					Player pl = (Player) sender;
-					if (!config.groupExists(args[2], pl.getWorld())){
+					if (config.groupExists(args[2], pl.getWorld()) == false){
 						pl.sendMessage(ChatColor.RED + "That group doesn't exist!");
 						return true;
 					}

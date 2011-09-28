@@ -3,10 +3,10 @@ main: com.lala.wordrank.WordRank
 version: 1.2
 author: LaLa, codename_B
 commands:
-    w:
-        description: Word
+    wordrank:
+        description: WordRank command
         usage: |
-               /<command> - See forum post for complete syntax
+               /<command> [add/remove/removeall] [word] [group]
 permissions:
     WordRank.*:
         description: Gives access to all WordRank commands

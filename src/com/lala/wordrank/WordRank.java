@@ -13,10 +13,9 @@ public class WordRank extends JavaPlugin{
 	public Config config = new Config(this);
 	private W w = new W(this);
 	public Server server;
-	public Permissions p = new Permissions();
 	public void onEnable(){
 		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new Chat(this), Priority.Normal, this);		
-		getCommand("w").setExecutor(w);
+		getCommand("wordrank").setExecutor(w);
 		setupPermissions();
 		server = getServer();
 		System.out.println("[WordRank] Enabled!");
