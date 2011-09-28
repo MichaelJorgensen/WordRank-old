@@ -1,6 +1,6 @@
 name: WordRank
 main: com.lala.wordrank.WordRank
-version: 1.2
+version: 1.2.1
 author: LaLa, codename_B
 commands:
     wordrank:
