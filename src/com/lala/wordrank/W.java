@@ -29,7 +29,7 @@ public class W implements CommandExecutor{
 			if (args.length <= 0){
 				return false;
 			}else{ // /w add [word] [group] [world] /w remove [word] /w removeall
-				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && has(sender, "wordrank.add")){
+				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && has(sender, "WordRank.add")){
 					Player pl = (Player) sender;
 					if (config.groupExists(args[2], pl.getWorld()) == false){
 						pl.sendMessage(ChatColor.RED + "That group doesn't exist!");
