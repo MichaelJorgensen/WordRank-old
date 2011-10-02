@@ -40,9 +40,11 @@ public class Chat extends PlayerListener{
 				player.sendMessage(ChatColor.RED + "You can't use a magic word for a group you are already in!");
 				return;
 			}else{
-				String[] g = getGroups(player);				
-				for (int i = g.length; i > 0; i--){
-					config.removeParent(player, g[i - 1], event.getMessage());					
+				String[] g = getGroups(player);
+				if (config.getSetGroup(event.getMessage())){
+					for (int i = g.length; i > 0; i--){
+						config.removeParent(player, g[i - 1], event.getMessage());
+					}
 				}
 				config.addGroup(event.getPlayer(), config.getWordGroup(event.getMessage()), event.getMessage());
 				player.sendMessage(ChatColor.GOLD + config.getCongratsMsg().replaceAll("%player%", event.getPlayer().getDisplayName()).replaceAll("%group%", config.getWordGroup(event.getMessage())));

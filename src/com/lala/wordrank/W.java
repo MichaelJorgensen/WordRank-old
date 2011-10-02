@@ -28,7 +28,7 @@ public class W implements CommandExecutor{
 		}else{
 			if (args.length <= 0){
 				return false;
-			}else{ // /w add [word] [group] [world] /w remove [word] /w removeall
+			}else{
 				if (args[0].equalsIgnoreCase("add") && args.length >= 3 && has(sender, "WordRank.add")){
 					Player pl = (Player) sender;
 					if (config.groupExists(args[2], pl.getWorld()) == false){
@@ -37,15 +37,19 @@ public class W implements CommandExecutor{
 					}
 					if (config.exists(args[1])){
 						sender.sendMessage(ChatColor.RED + "That word already exists!");
-						return true;						
-					}				
+						return true;
+					}
 					else{
 						Player player = (Player) sender;
 						String word = args[1];
 						String group = args[2];
+						boolean set = true;
+						if (args.length >= 4){
+							set = Boolean.parseBoolean(args[3]);
+						}						
 						String world = player.getWorld().getName();
-						if (args.length >= 4) world = args[3];
-						config.addWord(word, group, world);
+						if (args.length >= 5) world = args[4];
+						config.addWord(word, group, world, set);
 						player.sendMessage(ChatColor.GREEN + "Word added! (" + word + " gives group " + group + " for world" + world + ")");
 						return true;
 					}

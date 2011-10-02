@@ -18,17 +18,20 @@ public class WordRank extends JavaPlugin{
 		getCommand("wordrank").setExecutor(w);
 		setupPermissions();
 		server = getServer();
-		System.out.println("[WordRank] Enabled!");
+		send("Enabled!");
 	}
 	public void onDisable(){
-		System.out.println("[WordRank] Disabled!");
+		send("Disabled!");
 	}
 	private void setupPermissions() {
 	    try {
 	    	wpm = Permissions.getWorldPermissionsManager();
 	    } catch (Exception e) {
-	    	System.err.println("bPermissions not detected.");
+	    	System.err.println("[WordRank] bPermissions not detected - WordRank disabling.");
 	    	this.setEnabled(false);
 	    }
+	}
+	public void send(String message){
+		System.out.println("[WordRank] "+message);
 	}
 }

@@ -18,10 +18,11 @@ public class Config {
 	return plugin.getConfiguration();	
 	}
 
-	public void addWord(String word, String group, String world){
+	public void addWord(String word, String group, String world, boolean set){
 		final Configuration yml = getYML();
 		yml.setProperty("config.wordlist." + word + ".group", group);
 		yml.setProperty("config.wordlist." + word + ".world", world);
+		yml.setProperty("config.wordlist." + word + ".setgroup", set);
 		yml.save();
 	}
 	public World getWordWorld(String word){
@@ -50,6 +51,10 @@ public class Config {
 		yml.removeProperty("config.wordlist." + word);
 		yml.save();
 		return;
+	}
+	public boolean getSetGroup(String word){
+		final Configuration yml = getYML();
+		return yml.getBoolean("config.wordlist."+word+".setgroup", true);
 	}
 	public String getWordGroup(String word){
 		final Configuration yml = getYML();
