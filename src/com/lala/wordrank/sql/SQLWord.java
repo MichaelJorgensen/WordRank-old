@@ -40,7 +40,7 @@ public class SQLWord {
 			} catch (SQLException e){
 				plugin.sendErr("Error while adding the word "+word.getName()+" to the DB");
 				e.printStackTrace();
-				return String.valueOf(ChatColor.RED + "Error adding the word "+ChatColor.GOLD+word.getName()+ChatColor.GOLD+". Please check the console for more info.");
+				return String.valueOf(ChatColor.RED + "Error adding the word "+ChatColor.GOLD+word.getName()+ChatColor.RED+". Please check the console for more info.");
 			}
 		}
 	}
@@ -49,22 +49,14 @@ public class SQLWord {
 		if (!wordExists()){
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" does not exist!");
 		}else{
-			try{
-				ResultSet r = sql.query("SELECT word FROM wordrank WHERE word='"+word.getName()+"'");
-				r.deleteRow();
-				r.updateRow();
-				return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been deleted.");
-			} catch (SQLException e){
-				plugin.sendErr("Error while deleting the word "+word.getName()+" from the DB");
-				e.printStackTrace();
-				return String.valueOf(ChatColor.RED + "Error deleting word "+ChatColor.GOLD+word.getName()+ ". Please check the console for more info.");
-			}
+			sql.query("delete from wordrank where name='"+word.getName()+"'");
+			return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been deleted.");
 		}
 	}
 	
 	public boolean wordExists(){
 		ArrayList<String> w = getWords();
-		
+		if (w.equals(null)) return false;
 		if (w.contains(word.getName())){
 			return true;
 		}else{
@@ -73,7 +65,7 @@ public class SQLWord {
 	}
 	
 	public ArrayList<String> getWords(){
-		ResultSet rs = sql.query("SELECT word FROM wordrank");
+		ResultSet rs = sql.query("SELECT name FROM wordrank");
 		ArrayList<String> w = new ArrayList<String>();
 		
 		try {
@@ -89,7 +81,7 @@ public class SQLWord {
 	}
 	
 	public String getWordGroup(){
-		ResultSet rs = sql.query("SELECT word, groupname FROM wordrank WHERE word='"+word.getName()+"'");
+		ResultSet rs = sql.query("SELECT name, groupname FROM wordrank WHERE name='"+word.getName()+"'");
 		try {
 		return rs.getString(1);
 		} catch (SQLException e){
