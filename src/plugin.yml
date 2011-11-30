@@ -4,25 +4,21 @@ version: 2.0
 author: LaLa, codename_B
 commands:
     wordrank:
-        description: WordRank command
+        description: WordRank command syntax
         usage: |
-               /<command> [add|remove|removeall] [word] [group] [setasgroup] (world)
+               /<command> [add|remove] [word] (group)
 permissions:
     WordRank.*:
         description: Gives access to all WordRank commands
         children:
             WordRank.add: true
             WordRank.remove: true
-            WordRank.remove.all: true
             WordRank.say: true
     WordRank.add:
         description: Allows you to add a word
         default: false
     WordRank.remove:
         description: Allows you to remove a word
-        default: false
-    WordRank.remove.all:
-        description: Allows you to remove all words
         default: false
     WordRank.say:
         description: Allows you to be promoted by a word

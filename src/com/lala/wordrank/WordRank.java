@@ -134,6 +134,13 @@ public class WordRank extends JavaPlugin {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+		if (args.length == 0){
+			sender.sendMessage(ChatColor.DARK_RED+"|--WordRank Commands--|");
+			sender.sendMessage(ChatColor.GOLD+"/wordrank add [word] [group]");
+			sender.sendMessage(ChatColor.GOLD+"/wordrank remove [word]");
+			sender.sendMessage(ChatColor.YELLOW+"To redeem a group, simply type in-chat the word!");
+			return true;
+		}
 		if (args[0].equalsIgnoreCase("add")){
 			if (sender.hasPermission("wordrank.add")){
 				if (args.length == 3){
