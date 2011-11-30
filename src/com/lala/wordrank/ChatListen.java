@@ -23,7 +23,7 @@ public class ChatListen extends PlayerListener{
 		Player player = event.getPlayer();
 		String msg = event.getMessage();
 		
-		if (player.hasPermission("wordrank.say")){
+		if (player.hasPermission("wordrank.say") || player.hasPermission("wordrank."+msg)){
 			Word w = new Word(msg, "unknown");
 			SQLWord sw = new SQLWord(plugin, w);
 			ArrayList<String> wordlist = sw.getWords();
