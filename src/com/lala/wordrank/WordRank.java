@@ -33,7 +33,7 @@ public class WordRank extends JavaPlugin {
 	
 	public void onEnable(){
 		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListen(this), Priority.Normal, this);		
-		setupPermissions();
+		if (!setupPermissions()) return;
 		setupSQL();
 		send("is now enabled, version: "+this.getDescription().getVersion());
 	}
@@ -48,7 +48,7 @@ public class WordRank extends JavaPlugin {
 		sql.createTable("CREATE TABLE IF NOT EXISTS wordrank (name String, groupname String)");
 	}
 	
-	private void setupPermissions() {
+	private boolean setupPermissions() {
 		send("Checking permission plugins");
 		Config config = new Config(this);
 	    try {
@@ -69,30 +69,44 @@ public class WordRank extends JavaPlugin {
 	    	pexEnabled = false;
 	    }
 	    
+	    if (bpermEnabled && !pexEnabled && !config.getPerms().equals(Perms.bPermissions)){
+	    	this.getConfig().set("perm-plugin", "bPermissions");
+	    }
+	    
+	    if (!bpermEnabled && pexEnabled && !config.getPerms().equals(Perms.PEX)){
+	    	this.getConfig().set("perm-plugin", "PEX");
+	    }
+	    
 	    if (!bpermEnabled && !pexEnabled){
 	    	sendErr("No compatible permission plugins found. WordRank will now disable.");
 	    	this.setEnabled(false);
+	    	return false;
 	    }
 	    
 	    if (config.getPerms().equals(Perms.bPermissions) && !bpermEnabled){
 	    	sendErr("Config is set to bPermissions, however bPermissions is not detected. WordRank will now disable.");
 	    	this.setEnabled(false);
+	    	return false;
 	    }
 	    
 	    if (config.getPerms().equals(Perms.PEX) && !pexEnabled){
 	    	sendErr("Config is set to PEX, however PEX is not detected. WordRank will now disable.");
 	    	this.setEnabled(false);
+	    	return false;
 	    }
 	    
 	    if (config.getPerms().equals(Perms.GroupManager)){
 	    	sendErr("Config is set to GroupManager, however GroupManager is not supported yet. WordRank will now disable.");
 	    	this.setEnabled(false);
+	    	return false;
 	    }
 	    
 	    if (config.getPerms().equals(Perms.Unknown)){
 	    	sendErr("Config is set to the unknown permission plugin '"+config.permPlugin()+"' WordRank will now disable.");
 	    	this.setEnabled(false);
+	    	return false;
 	    }
+	    return true;
 	}
 	
 	public void send(String message){

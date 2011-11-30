@@ -1,1 +1,2 @@
 perm-plugin: bPermissions
+perm-options: [bPermissions, PEX]

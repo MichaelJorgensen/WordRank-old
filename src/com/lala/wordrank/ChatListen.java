@@ -40,6 +40,7 @@ public class ChatListen extends PlayerListener{
 				
 				player.sendMessage(ChatColor.GREEN+"Congrats! You have been promoted to the group "+ChatColor.YELLOW+w.getGroup()+ChatColor.GREEN+"!");
 				event.setCancelled(true);
+				plugin.send(player.getName()+" has been promoted to "+w.getGroup()+" by WordRank.");
 				return;
 			}
 		}else{
