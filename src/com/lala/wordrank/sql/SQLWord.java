@@ -81,9 +81,9 @@ public class SQLWord {
 	}
 	
 	public String getWordGroup(){
-		ResultSet rs = sql.query("SELECT name, groupname FROM wordrank WHERE name='"+word.getName()+"'");
+		ResultSet rs = sql.query("SELECT groupname FROM wordrank WHERE name='"+word.getName()+"'");
 		try {
-		return rs.getString(1);
+			return rs.getString(1);
 		} catch (SQLException e){
 			plugin.sendErr("SQLException while getting the word "+word.getName()+"'s group from the DB");
 			e.printStackTrace();

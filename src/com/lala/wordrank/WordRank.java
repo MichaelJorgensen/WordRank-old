@@ -28,8 +28,8 @@ public class WordRank extends JavaPlugin {
 	public SQLite sql;
 	private Logger log = Logger.getLogger("Minecraft");
 	
-	public boolean bpermEnabled;
-	public boolean pexEnabled;
+	public boolean bpermEnabled = false;
+	public boolean pexEnabled = false;
 	
 	public void onEnable(){
 		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListen(this), Priority.Normal, this);		
@@ -51,14 +51,14 @@ public class WordRank extends JavaPlugin {
 	private boolean setupPermissions() {
 		send("Checking permission plugins");
 		Config config = new Config(this);
-	    try {
+		if (getServer().getPluginManager().isPluginEnabled("bPermissions")){
 	    	bperm = Permissions.getWorldPermissionsManager();
 	    	bpermEnabled = true;
 	    	send("bPermissions detected");
-	    } catch (Exception e) {
+		}else{
 	    	send("bPermissions not detected");
 	    	bpermEnabled = false;
-	    }
+		}
 	    
 	    if (getServer().getPluginManager().isPluginEnabled("PermissionsEx")){
 	    	pex = PermissionsEx.getPermissionManager();
@@ -70,10 +70,12 @@ public class WordRank extends JavaPlugin {
 	    }
 	    
 	    if (bpermEnabled && !pexEnabled && !config.getPerms().equals(Perms.bPermissions)){
+	    	send("bPermissions is enabled, and PEX is not detected, however the config has PEX selected. Now changing selection to bPermissions.");
 	    	this.getConfig().set("perm-plugin", "bPermissions");
 	    }
 	    
 	    if (!bpermEnabled && pexEnabled && !config.getPerms().equals(Perms.PEX)){
+	    	send("PEX is enabled, and bPermissions is not detected, however the config has bPermissions selected. Now changing selection to PEX.");
 	    	this.getConfig().set("perm-plugin", "PEX");
 	    }
 	    
@@ -106,6 +108,7 @@ public class WordRank extends JavaPlugin {
 	    	this.setEnabled(false);
 	    	return false;
 	    }
+	    this.saveConfig();
 	    return true;
 	}
 	

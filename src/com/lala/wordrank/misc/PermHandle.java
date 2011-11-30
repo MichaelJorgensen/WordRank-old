@@ -21,7 +21,6 @@ public class PermHandle {
 		this.player = player;
 	}
 	
-	@SuppressWarnings("null")
 	public void setGroup(String groupname){
 		if (perms.equals(Perms.bPermissions)){
 			plugin.bperm.getPermissionSet(player.getWorld()).setGroup(player, groupname);
@@ -29,7 +28,7 @@ public class PermHandle {
 		}
 		
 		if (perms.equals(Perms.PEX)){
-			String[] groups = null;
+			String[] groups = new String[1];
 			groups[0] = groupname;
 			plugin.pex.getUser(player).setGroups(groups);
 			return;
@@ -48,6 +47,7 @@ public class PermHandle {
 			PermissionGroup[] gl = plugin.pex.getUser(player).getGroups();
 			ArrayList<String> g = new ArrayList<String>();
 			for (int i = gl.length; i > 0; i--){
+				plugin.send(gl[i-1].getName());
 				g.add(gl[i-1].getName());
 			}
 			return g;
