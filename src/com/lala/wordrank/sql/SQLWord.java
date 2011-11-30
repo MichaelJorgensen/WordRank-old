@@ -29,7 +29,7 @@ public class SQLWord {
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" already exists!");
 		}else{
 			try {
-				PreparedStatement p = sql.getConnection().prepareStatement("insert into wordrank values (?, ?)");
+				PreparedStatement p = sql.getConnection().prepareStatement("INSERT INTO wordrank VALUES (?, ?)");
 				p.setString(1, word.getName());
 				p.setString(2, word.getGroup());
 				p.addBatch();
@@ -50,7 +50,7 @@ public class SQLWord {
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" does not exist!");
 		}else{
 			try{
-				ResultSet r = sql.query("select name from wordrank where name='"+word.getName()+"'");
+				ResultSet r = sql.query("SELECT word FROM wordrank WHERE word='"+word.getName()+"'");
 				r.deleteRow();
 				r.updateRow();
 				return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been deleted.");
@@ -73,7 +73,7 @@ public class SQLWord {
 	}
 	
 	public ArrayList<String> getWords(){
-		ResultSet rs = sql.query("select name from wordrank");
+		ResultSet rs = sql.query("SELECT word FROM wordrank");
 		ArrayList<String> w = new ArrayList<String>();
 		
 		try {
@@ -89,7 +89,7 @@ public class SQLWord {
 	}
 	
 	public String getWordGroup(){
-		ResultSet rs = sql.query("select name, group from wordrank where word='"+word.getName()+"'");
+		ResultSet rs = sql.query("SELECT word, groupname FROM wordrank WHERE word='"+word.getName()+"'");
 		try {
 		return rs.getString(1);
 		} catch (SQLException e){

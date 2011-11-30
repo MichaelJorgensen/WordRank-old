@@ -10,7 +10,8 @@ public class Config {
 	
 	public Config(WordRank plugin){
 		this.yml = plugin.getConfig();
-		plugin.getConfig().options().copyDefaults(true);
+		yml.options().copyDefaults(true);
+		plugin.saveConfig();
 	}
 	
 	public Perms getPerms(){

@@ -39,18 +39,13 @@ public class WordRank extends JavaPlugin {
 	}
 	
 	public void onDisable(){
+		sql.close();
 		send("is now disabled!");
 	}
 	
 	private void setupSQL(){
 		this.sql = new SQLite(log, "[WordRank]", "wordrank_words", this.getDataFolder().getAbsolutePath());
-		if (!sql.checkTable("wordrank")){
-			send("Table 'wordrank' not found, creating.");
-			sql.createTable("create table wordrank (word String, group String)");
-			send("Table 'wordrank' created!");
-		}else{
-			send("WordRank's database found and table 'wordrank' detected.");
-		}
+		sql.createTable("CREATE TABLE IF NOT EXISTS wordrank (name String, groupname String)");
 	}
 	
 	private void setupPermissions() {
