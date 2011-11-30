@@ -47,7 +47,6 @@ public class PermHandle {
 			PermissionGroup[] gl = plugin.pex.getUser(player).getGroups();
 			ArrayList<String> g = new ArrayList<String>();
 			for (int i = gl.length; i > 0; i--){
-				plugin.send(gl[i-1].getName());
 				g.add(gl[i-1].getName());
 			}
 			return g;
