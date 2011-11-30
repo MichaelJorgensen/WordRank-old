@@ -1,12 +1,12 @@
 name: WordRank
 main: com.lala.wordrank.WordRank
-version: 1.2.2
+version: 2.0
 author: LaLa, codename_B
 commands:
     wordrank:
         description: WordRank command
         usage: |
-               /<command> [add/remove/removeall] [word] [group] [setasgroup] (world)
+               /<command> [add|remove|removeall] [word] [group] [setasgroup] (world)
 permissions:
     WordRank.*:
         description: Gives access to all WordRank commands
@@ -26,4 +26,4 @@ permissions:
         default: false
     WordRank.say:
         description: Allows you to be promoted by a word
-        default: true
+        default: false
