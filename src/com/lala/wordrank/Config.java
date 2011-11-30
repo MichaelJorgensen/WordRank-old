@@ -6,12 +6,11 @@ import com.lala.wordrank.misc.Perms;
 
 public class Config {
 	
-	private WordRank plugin;
-	FileConfiguration yml;
+	private FileConfiguration yml;
 	
 	public Config(WordRank plugin){
-		this.plugin = plugin;
-		this.yml = this.plugin.getConfig();
+		this.yml = plugin.getConfig();
+		plugin.getConfig().options().copyDefaults(true);
 	}
 	
 	public Perms getPerms(){
