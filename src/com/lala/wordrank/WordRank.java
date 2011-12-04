@@ -40,9 +40,9 @@ public class WordRank extends JavaPlugin {
 	
 	public void onEnable(){
 		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListen(this), Priority.Normal, this);		
+		setupSQL();
 		if (!setupPermissions()) return;
 		if (!checkRedeemType()) return;
-		setupSQL();
 		send("is now enabled, version: "+this.getDescription().getVersion());
 	}
 	
