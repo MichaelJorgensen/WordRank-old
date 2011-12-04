@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
 
 import com.lala.wordrank.misc.PermHandle;
+import com.lala.wordrank.misc.RedeemType;
 import com.lala.wordrank.sql.SQLWord;
 
 public class ChatListen extends PlayerListener{
@@ -20,6 +21,7 @@ public class ChatListen extends PlayerListener{
 	
 	@Override
 	public void onPlayerChat(PlayerChatEvent event){
+		if (plugin.redeemtype.equals(RedeemType.Command) || plugin.redeemtype.equals(RedeemType.Unknown)) return;
 		Player player = event.getPlayer();
 		String msg = event.getMessage();
 		
