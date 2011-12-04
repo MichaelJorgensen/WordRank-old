@@ -9,6 +9,8 @@ import ru.tehkode.permissions.PermissionGroup;
 
 import com.lala.wordrank.WordRank;
 
+import de.bananaco.permissions.interfaces.PermissionSet;
+
 public class PermHandle {
 
 	private WordRank plugin;
@@ -23,7 +25,10 @@ public class PermHandle {
 	
 	public void setGroup(String groupname){
 		if (perms.equals(Perms.bPermissions)){
-			plugin.bperm.getPermissionSet(player.getWorld()).setGroup(player, groupname);
+			List<PermissionSet> ps = plugin.bperm.getPermissionSets();
+			for (int i = 0; i < ps.size(); i++){
+				ps.get(i).setGroup(player, groupname);
+			}
 			return;
 		}
 		
