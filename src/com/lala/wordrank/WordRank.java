@@ -207,17 +207,17 @@ public class WordRank extends JavaPlugin {
 							PermHandle ph = new PermHandle(this, config.getPerms(), player);
 							String groupname = sw.getWordGroup();
 							
-							if (ph.getPlayerGroups().contains(groupname)){
+							/*if (ph.getPlayerGroups().contains(groupname)){
 								player.sendMessage(ChatColor.RED+"You are already in the group '"+groupname+"' that this word assigns.");
 								return true;
-							}else{
+							}else{*/
 								w.setGroup(groupname);
 								ph.setGroup(groupname);
 								
 								player.sendMessage(ChatColor.GREEN+"Congrats! You have been promoted to the group "+ChatColor.YELLOW+w.getGroup()+ChatColor.GREEN+"!");
 								send(player.getName()+" has been promoted to "+w.getGroup()+" by WordRank.");
 								return true;
-							}
+							//}
 						}else{
 							player.sendMessage(ChatColor.RED+"That word doesn't exist!");
 							return true;
