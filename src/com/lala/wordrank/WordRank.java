@@ -48,6 +48,7 @@ public class WordRank extends JavaPlugin {
 	
 	public void onDisable(){
 		sql.close();
+		this.saveConfig();
 		send("is now disabled!");
 	}
 	
@@ -83,14 +84,14 @@ public class WordRank extends JavaPlugin {
 	    if (bpermEnabled && !pexEnabled && !perms.equals(Perms.bPermissions)){
 	    	send("bPermissions is enabled, and PEX is not detected, however the config has PEX selected. Now changing selection to bPermissions.");
 	    	this.getConfig().set("perm-plugin", "bPermissions");
-	    	perms = Perms.bPermissions;
 	    }
 	    
 	    if (!bpermEnabled && pexEnabled && !perms.equals(Perms.PEX)){
 	    	send("PEX is enabled, and bPermissions is not detected, however the config has bPermissions selected. Now changing selection to PEX.");
 	    	this.getConfig().set("perm-plugin", "PEX");
-	    	perms = Perms.PEX;
 	    }
+	    
+	    perms = config.getPerms();
 	    
 	    if (!bpermEnabled && !pexEnabled){
 	    	sendErr("No compatible permission plugins found. WordRank will now disable.");
