@@ -1,12 +1,15 @@
 name: WordRank
 main: com.lala.wordrank.WordRank
 version: 2.0.1
-author: LaLa, codename_B
+author: LaLa
+authors: [codename_B]
+website: http://dev.bukkit.org/server-mods/wordrank/
+softdepend: [bPermissions, PermissionsEx]
 commands:
     wordrank:
         description: WordRank command syntax
-        usage: |
-               /<command> [add|remove|words] (word) (group)
+        aliases: [wordrank, wr]
+        usage: /<command> [add|remove|words] (word) (group)
 permissions:
     WordRank.*:
         description: Gives access to all WordRank commands
