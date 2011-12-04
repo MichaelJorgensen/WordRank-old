@@ -1,5 +1,6 @@
 package com.lala.wordrank.sql;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,13 +30,14 @@ public class SQLWord {
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" already exists!");
 		}else{
 			try {
-				PreparedStatement p = sql.getConnection().prepareStatement("INSERT INTO wordrank VALUES (?, ?)");
+				Connection con = sql.getConnection();
+				PreparedStatement p = con.prepareStatement("INSERT INTO wordrank VALUES (?, ?)");
 				p.setString(1, word.getName());
 				p.setString(2, word.getGroup());
 				p.addBatch();
-				sql.getConnection().setAutoCommit(false);
+				con.setAutoCommit(false);
 				p.executeBatch();
-				sql.getConnection().setAutoCommit(true);
+				con.setAutoCommit(true);
 				return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+" has been successfully added!");
 			} catch (SQLException e){
 				plugin.sendErr("Error while adding the word "+word.getName()+" to the DB");
@@ -74,7 +76,7 @@ public class SQLWord {
 			}
 			return w;
 		}catch (SQLException e){
-			plugin.send("SQLException while getting coupons from the database");
+			plugin.send("SQLException while getting words from the database");
 			e.printStackTrace();
 		}
 		return null;

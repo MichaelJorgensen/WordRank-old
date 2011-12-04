@@ -1,2 +1,4 @@
 perm-plugin: bPermissions
 perm-options: [bPermissions, PEX]
+redeem-type: Chat
+redeem-options: [Chat, Command]

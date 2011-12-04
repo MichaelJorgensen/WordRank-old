@@ -1,12 +1,12 @@
 name: WordRank
 main: com.lala.wordrank.WordRank
-version: 2.0
+version: 2.0.1
 author: LaLa, codename_B
 commands:
     wordrank:
         description: WordRank command syntax
         usage: |
-               /<command> [add|remove] [word] (group)
+               /<command> [add|remove|words] (word) (group)
 permissions:
     WordRank.*:
         description: Gives access to all WordRank commands
@@ -14,6 +14,7 @@ permissions:
             WordRank.add: true
             WordRank.remove: true
             WordRank.say: true
+            WordRank.wordlist: true
     WordRank.add:
         description: Allows you to add a word
         default: false
@@ -22,4 +23,7 @@ permissions:
         default: false
     WordRank.say:
         description: Allows you to be promoted by a word
+        default: false
+    WordRank.wordlist:
+        description: Allows you to view a list of words
         default: false

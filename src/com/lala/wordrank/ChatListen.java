@@ -23,18 +23,16 @@ public class ChatListen extends PlayerListener{
 		Player player = event.getPlayer();
 		String msg = event.getMessage();
 		
-		if (player.hasPermission("wordrank.say") || player.hasPermission("wordrank."+msg)){
+		if (player.hasPermission("WordRank.say") || player.hasPermission("WordRank."+msg)){
 			Word w = new Word(msg, "unknown");
 			SQLWord sw = new SQLWord(plugin, w);
 			ArrayList<String> wordlist = sw.getWords();
-			
 			if (wordlist.contains(msg)){
 				Config config = new Config(plugin);
 				PermHandle ph = new PermHandle(plugin, config.getPerms(), player);
 				String groupname = sw.getWordGroup();
 				
 				if (ph.getPlayerGroups().contains(groupname)) return;
-				
 				w.setGroup(groupname);
 				ph.setGroup(groupname);
 				
