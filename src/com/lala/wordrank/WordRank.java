@@ -35,6 +35,7 @@ public class WordRank extends JavaPlugin {
 	public boolean bpermEnabled = false;
 	public boolean pexEnabled = false;
 	
+	Perms perms = Perms.Unknown;
 	RedeemType redeemtype = RedeemType.Unknown;
 	
 	public void onEnable(){
@@ -77,14 +78,18 @@ public class WordRank extends JavaPlugin {
 	    	pexEnabled = false;
 	    }
 	    
-	    if (bpermEnabled && !pexEnabled && !config.getPerms().equals(Perms.bPermissions)){
+	    perms = config.getPerms();
+	    
+	    if (bpermEnabled && !pexEnabled && !perms.equals(Perms.bPermissions)){
 	    	send("bPermissions is enabled, and PEX is not detected, however the config has PEX selected. Now changing selection to bPermissions.");
 	    	this.getConfig().set("perm-plugin", "bPermissions");
+	    	perms = Perms.bPermissions;
 	    }
 	    
-	    if (!bpermEnabled && pexEnabled && !config.getPerms().equals(Perms.PEX)){
+	    if (!bpermEnabled && pexEnabled && !perms.equals(Perms.PEX)){
 	    	send("PEX is enabled, and bPermissions is not detected, however the config has bPermissions selected. Now changing selection to PEX.");
 	    	this.getConfig().set("perm-plugin", "PEX");
+	    	perms = Perms.bPermissions;
 	    }
 	    
 	    if (!bpermEnabled && !pexEnabled){
@@ -93,31 +98,30 @@ public class WordRank extends JavaPlugin {
 	    	return false;
 	    }
 	    
-	    if (config.getPerms().equals(Perms.bPermissions) && !bpermEnabled){
+	    if (perms.equals(Perms.bPermissions) && !bpermEnabled){
 	    	sendErr("Config is set to bPermissions, however bPermissions is not detected. WordRank will now disable.");
 	    	this.setEnabled(false);
 	    	return false;
 	    }
 	    
-	    if (config.getPerms().equals(Perms.PEX) && !pexEnabled){
+	    if (perms.equals(Perms.PEX) && !pexEnabled){
 	    	sendErr("Config is set to PEX, however PEX is not detected. WordRank will now disable.");
 	    	this.setEnabled(false);
 	    	return false;
 	    }
 	    
-	    if (config.getPerms().equals(Perms.GroupManager)){
+	    if (perms.equals(Perms.GroupManager)){
 	    	sendErr("Config is set to GroupManager, however GroupManager is not supported yet. WordRank will now disable.");
 	    	this.setEnabled(false);
 	    	return false;
 	    }
 	    
-	    if (config.getPerms().equals(Perms.Unknown)){
+	    if (perms.equals(Perms.Unknown)){
 	    	sendErr("Config is set to the unknown permission plugin '"+config.permPlugin()+"' WordRank will now disable.");
 	    	this.setEnabled(false);
 	    	return false;
 	    }
-	    this.saveConfig();
-	    
+	    this.saveConfig();	    
 	    if (config.getPerms().equals(Perms.bPermissions)) send("bPermissions will be used.");
 	    if (config.getPerms().equals(Perms.PEX)) send("PEX will be used.");
 	    return true;
