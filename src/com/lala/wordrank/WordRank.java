@@ -89,7 +89,7 @@ public class WordRank extends JavaPlugin {
 	    if (!bpermEnabled && pexEnabled && !perms.equals(Perms.PEX)){
 	    	send("PEX is enabled, and bPermissions is not detected, however the config has bPermissions selected. Now changing selection to PEX.");
 	    	this.getConfig().set("perm-plugin", "PEX");
-	    	perms = Perms.bPermissions;
+	    	perms = Perms.PEX;
 	    }
 	    
 	    if (!bpermEnabled && !pexEnabled){
