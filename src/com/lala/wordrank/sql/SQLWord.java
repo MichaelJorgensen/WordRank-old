@@ -38,9 +38,9 @@ public class SQLWord {
 				con.setAutoCommit(false);
 				p.executeBatch();
 				con.setAutoCommit(true);
-				return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+" has been successfully added!");
+				return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been successfully added!");
 			} catch (SQLException e){
-				plugin.sendErr("Error while adding the word "+word.getName()+" to the DB");
+				plugin.sendErr("Error while adding the word "+word.getName()+" to the database. Error message: "+e.getMessage()+ " ERROR CODE: "+e.getErrorCode());
 				e.printStackTrace();
 				return String.valueOf(ChatColor.RED + "Error adding the word "+ChatColor.GOLD+word.getName()+ChatColor.RED+". Please check the console for more info.");
 			}
@@ -76,7 +76,7 @@ public class SQLWord {
 			}
 			return w;
 		}catch (SQLException e){
-			plugin.send("SQLException while getting words from the database");
+			plugin.send("SQLException while getting words from the database. Error message: "+e.getMessage()+" ERROR CODE: "+e.getErrorCode());
 			e.printStackTrace();
 		}
 		return null;
@@ -87,7 +87,7 @@ public class SQLWord {
 		try {
 			return rs.getString(1);
 		} catch (SQLException e){
-			plugin.sendErr("SQLException while getting the word "+word.getName()+"'s group from the DB");
+			plugin.sendErr("SQLException while getting the word "+word.getName()+"'s group from the database. Error message: "+e.getMessage()+" ERROR CODE: "+e.getErrorCode());
 			e.printStackTrace();
 			return null;
 		}
