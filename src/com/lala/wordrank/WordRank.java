@@ -65,7 +65,7 @@ public class WordRank extends JavaPlugin {
 	    	bpermEnabled = true;
 	    	send("bPermissions is detected");
 		}else{
-	    	send("bPermissions not detected");
+	    	send("bPermissions is not detected");
 	    	bpermEnabled = false;
 		}
 	    
@@ -74,7 +74,7 @@ public class WordRank extends JavaPlugin {
 	    	pexEnabled = true;
 	    	send("PEX is detected");
 	    }else{
-	    	send("PEX not detected");
+	    	send("PEX is not detected");
 	    	pexEnabled = false;
 	    }
 	    
