@@ -1,4 +1,18 @@
+# WordRank configuration file
+# Number signs (#) denote comments
+# SQL options:
+# MySQL: remote database usually hosted on another server such as a website
+# SQLite: for most users, this is a locally stored database without the hassel of setting up MySQL
+# If SQLite is selected, IGNORE sql-config
 perm-plugin: bPermissions
 perm-options: [bPermissions, PEX]
+sql-config:
+ hostname: localhost
+ portnumber: '3306'
+ database: WordRank
+ username: minecraft
+ password: mincraft
+sql-type: SQLite
+sql-options: [MySQL, SQLite]
 redeem-type: Chat
 redeem-options: [Chat, Command]

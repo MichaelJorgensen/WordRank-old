@@ -1,6 +1,6 @@
 name: WordRank
 main: com.lala.wordrank.WordRank
-version: 2.0.1
+version: 2.0.2
 author: LaLa
 authors: [codename_B]
 website: http://dev.bukkit.org/server-mods/wordrank/

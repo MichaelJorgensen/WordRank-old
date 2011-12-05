@@ -3,11 +3,13 @@ package com.lala.wordrank;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import lib.PatPeter.SQLibrary.MySQL;
 import lib.PatPeter.SQLibrary.SQLite;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -19,6 +21,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import com.lala.wordrank.misc.PermHandle;
 import com.lala.wordrank.misc.Perms;
 import com.lala.wordrank.misc.RedeemType;
+import com.lala.wordrank.sql.Query;
+import com.lala.wordrank.sql.SQLType;
 import com.lala.wordrank.sql.SQLWord;
 
 import de.bananaco.permissions.Permissions;
@@ -29,33 +33,66 @@ public class WordRank extends JavaPlugin {
 	public WorldPermissionsManager bperm;
 	public PermissionManager pex;
 	
-	public SQLite sql;
+	public SQLite sqlite;
+	public MySQL mysql;
+	
 	private Logger log = Logger.getLogger("Minecraft");
 	
 	public boolean bpermEnabled = false;
 	public boolean pexEnabled = false;
 	
-	Perms perms = Perms.Unknown;
-	RedeemType redeemtype = RedeemType.Unknown;
+	public Perms perms = Perms.Unknown;
+	public RedeemType redeemtype = RedeemType.Unknown;
+	public SQLType sqtype = SQLType.Unknown;
 	
 	public void onEnable(){
 		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListen(this), Priority.Normal, this);		
-		setupSQL();
+		if (!setupSQL()) return;
 		if (!setupPermissions()) return;
 		if (!checkRedeemType()) return;
 		send("is now enabled, version: "+this.getDescription().getVersion());
 	}
 	
 	public void onDisable(){
-		sql.close();
+		if (sqtype.equals(SQLType.SQLite))
+			sqlite.close();
+		if (sqtype.equals(SQLType.MySQL))
+			mysql.close();
 		this.saveConfig();
 		send("is now disabled!");
 	}
 	
-	private void setupSQL(){
-		this.sql = new SQLite(log, "[WordRank]", "wordrank_words", this.getDataFolder().getAbsolutePath());
-		sql.open();
-		sql.createTable("CREATE TABLE IF NOT EXISTS wordrank (name String, groupname String)");
+	private boolean setupSQL(){
+		send("Setting up SQL support");
+		Config config = new Config(this);
+		FileConfiguration cfg = this.getConfig();
+		sqtype = config.getSQLType();
+		
+		if (sqtype.equals(SQLType.SQLite)){
+			this.sqlite = new SQLite(log, "[WordRank]", "wordrank_words", this.getDataFolder().getAbsolutePath());
+			sqlite.open();
+			sqlite.createTable(Query.CREATE_TABLE_IF_NOT_EXISTS.value());
+			send("SQLite will be used.");
+		}
+		
+		if (sqtype.equals(SQLType.MySQL)){
+			this.mysql = new MySQL(log, "[WordRank]", 
+					cfg.getString("sql-config.hostname"),
+					cfg.getString("sql-config.portnumber"),
+					cfg.getString("sql-config.database"),
+					cfg.getString("sql-config.username"),
+					cfg.getString("sql-config.password"));
+			mysql.open();
+			mysql.createTable(Query.CREATE_TABLE_IF_NOT_EXISTS.value());
+			send("MySQL will be used.");
+		}
+		
+		if (sqtype.equals(SQLType.Unknown)){
+			sendErr("Config is set to the unknown SQLType '"+config.sqlType()+"' WordRank will now disable.");
+			return false;
+		}
+		this.saveConfig();
+		return true;
 	}
 	
 	private boolean setupPermissions() {
@@ -272,6 +309,10 @@ public class WordRank extends JavaPlugin {
 			if (sender.hasPermission("WordRank.wordlist")){
 				if (args.length == 1){
 					ArrayList<String> words = new SQLWord(this, new Word(null, null)).getWords();
+					if (words.isEmpty() || words.isEmpty() || words.equals(null)){
+						sender.sendMessage(ChatColor.RED+"No words found.");
+						return true;
+					}
 					StringBuilder sb = new StringBuilder();
 					sb.append(ChatColor.DARK_PURPLE+"Word List: "+ChatColor.GOLD);
 					for (int i = 0; i < words.size(); i++){

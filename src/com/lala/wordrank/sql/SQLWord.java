@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import lib.PatPeter.SQLibrary.MySQL;
 import lib.PatPeter.SQLibrary.SQLite;
 
 import org.bukkit.ChatColor;
@@ -17,12 +18,20 @@ public class SQLWord {
 
 	private Word word;
 	private WordRank plugin;
-	private SQLite sql;
+	
+	private SQLite sqlite;
+	private MySQL mysql;
+	
+	private SQLType sqltype;
 	
 	public SQLWord(WordRank plugin, Word word){
 		this.plugin = plugin;
 		this.word = word;
-		this.sql = this.plugin.sql;
+		this.sqltype = plugin.sqtype;
+		if (sqltype.equals(SQLType.SQLite))
+			sqlite = plugin.sqlite;
+		if (sqltype.equals(SQLType.MySQL))
+			mysql = plugin.mysql;
 	}
 	
 	public String addToDB(){
@@ -30,8 +39,12 @@ public class SQLWord {
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" already exists!");
 		}else{
 			try {
-				Connection con = sql.getConnection();
-				PreparedStatement p = con.prepareStatement("INSERT INTO wordrank VALUES (?, ?)");
+				Connection con = null;
+				if (sqltype.equals(SQLType.SQLite))
+					con = sqlite.getConnection();
+				if (sqltype.equals(SQLType.MySQL))
+					con = mysql.getConnection();
+				PreparedStatement p = con.prepareStatement(Query.INSERT_INTO.value());
 				p.setString(1, word.getName());
 				p.setString(2, word.getGroup());
 				p.addBatch();
@@ -43,6 +56,10 @@ public class SQLWord {
 				plugin.sendErr("Error while adding the word "+word.getName()+" to the database. Error message: "+e.getMessage()+ " ERROR CODE: "+e.getErrorCode());
 				e.printStackTrace();
 				return String.valueOf(ChatColor.RED + "Error adding the word "+ChatColor.GOLD+word.getName()+ChatColor.RED+". Please check the console for more info.");
+			} catch (Exception e){
+				plugin.sendErr("Unknown error while adding the word "+word.getName()+" to the database. Stacktrace:");
+				e.printStackTrace();
+				return String.valueOf(ChatColor.RED + "Error adding the word "+ChatColor.GOLD+word.getName()+ChatColor.RED+". Please check the console for more info.");
 			}
 		}
 	}
@@ -51,7 +68,12 @@ public class SQLWord {
 		if (!wordExists()){
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" does not exist!");
 		}else{
-			sql.query("delete from wordrank where name='"+word.getName()+"'");
+			if (sqltype.equals(SQLType.SQLite))
+				sqlite.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
+			
+			if (sqltype.equals(SQLType.MySQL))
+				mysql.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
+			
 			return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been deleted.");
 		}
 	}
@@ -59,23 +81,28 @@ public class SQLWord {
 	public boolean wordExists(){
 		ArrayList<String> w = getWords();
 		if (w.equals(null)) return false;
-		if (w.contains(word.getName())){
+		if (w.contains(word.getName()))
 			return true;
-		}else{
-			return false;
-		}
+		else
+			return false;		
 	}
 	
 	public ArrayList<String> getWords(){
-		ResultSet rs = sql.query("SELECT name FROM wordrank");
+		ResultSet rs = null;
 		ArrayList<String> w = new ArrayList<String>();
 		
+		if (sqltype.equals(SQLType.SQLite))
+			rs = sqlite.query(Query.SELECT_NAME.value());
+		if (sqltype.equals(SQLType.MySQL))
+			rs = mysql.query(Query.SELECT_NAME.value());
 		try {
 			while (rs.next()){
 				w.add(rs.getString(1));
 			}
 			return w;
 		}catch (SQLException e){
+			if (e.getMessage().contains("Illegal operation on empty result"))
+				return null;
 			plugin.send("SQLException while getting words from the database. Error message: "+e.getMessage()+" ERROR CODE: "+e.getErrorCode());
 			e.printStackTrace();
 		}
@@ -83,9 +110,18 @@ public class SQLWord {
 	}
 	
 	public String getWordGroup(){
-		ResultSet rs = sql.query("SELECT groupname FROM wordrank WHERE name='"+word.getName()+"'");
+		ResultSet rs = null;
+		
+		if (sqltype.equals(SQLType.SQLite))
+			rs = sqlite.query(Query.SELECT_GROUPNAME.value()+" name='"+word.getName()+"'");
+		if (sqltype.equals(SQLType.MySQL))
+			rs = mysql.query(Query.SELECT_GROUPNAME.value()+"name='"+word.getName()+"'");
 		try {
-			return rs.getString(1);
+			String s = null;
+			while (rs.next()){
+				s = rs.getString(1);
+			}
+			return s;
 		} catch (SQLException e){
 			plugin.sendErr("SQLException while getting the word "+word.getName()+"'s group from the database. Error message: "+e.getMessage()+" ERROR CODE: "+e.getErrorCode());
 			e.printStackTrace();
