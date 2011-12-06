@@ -5,7 +5,7 @@ public enum Query {
 	
 	public String value(){
 		switch (this){
-		case CREATE_TABLE: return "CREATE TABLE wordrank (name STRING, groupname STRING)";
+		case CREATE_TABLE: return "CREATE TABLE wordrank (name VARCHAR(254), groupname VARCHAR(254))";
 		case CREATE_TABLE_IF_NOT_EXISTS: return "CREATE TABLE IF NOT EXISTS wordrank (name VARCHAR(254), groupname VARCHAR(254))";
 		case INSERT_INTO: return "INSERT INTO wordrank VALUES (?, ?)";
 		case DELETE_FROM: return "DELETE FROM wordrank WHERE ";

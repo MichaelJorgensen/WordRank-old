@@ -1,10 +1,6 @@
 package com.lala.wordrank;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
-
-import lib.PatPeter.SQLibrary.MySQL;
-import lib.PatPeter.SQLibrary.SQLite;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,9 +17,11 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import com.lala.wordrank.misc.PermHandle;
 import com.lala.wordrank.misc.Perms;
 import com.lala.wordrank.misc.RedeemType;
+import com.lala.wordrank.sql.MySQL;
 import com.lala.wordrank.sql.Query;
 import com.lala.wordrank.sql.SQLType;
 import com.lala.wordrank.sql.SQLWord;
+import com.lala.wordrank.sql.SQLite;
 
 import de.bananaco.permissions.Permissions;
 import de.bananaco.permissions.worlds.WorldPermissionsManager;
@@ -35,8 +33,6 @@ public class WordRank extends JavaPlugin {
 	
 	public SQLite sqlite;
 	public MySQL mysql;
-	
-	private Logger log = Logger.getLogger("Minecraft");
 	
 	public boolean bpermEnabled = false;
 	public boolean pexEnabled = false;
@@ -58,7 +54,6 @@ public class WordRank extends JavaPlugin {
 			sqlite.close();
 		if (sqtype.equals(SQLType.MySQL))
 			mysql.close();
-		this.saveConfig();
 		send("is now disabled!");
 	}
 	
@@ -69,30 +64,49 @@ public class WordRank extends JavaPlugin {
 		sqtype = config.getSQLType();
 		
 		if (sqtype.equals(SQLType.SQLite)){
-			this.sqlite = new SQLite(log, "[WordRank]", "wordrank_words", this.getDataFolder().getAbsolutePath());
-			sqlite.open();
-			sqlite.createTable(Query.CREATE_TABLE_IF_NOT_EXISTS.value());
-			send("SQLite will be used.");
+			this.sqlite = new SQLite(this, "wordrank_words", this.getDataFolder().getAbsolutePath());
+			send("Checking tables..");
+			if (!sqlite.tableExists("wordrank")){
+				send("Table 'wordrank' not found. Creating..");
+				sqlite.createTable(Query.CREATE_TABLE_IF_NOT_EXISTS);
+				send("Table 'wordrank' created!");
+				send("SQLite will be used.");
+				return true;
+			}else{
+				send("Table 'wordrank' found.");
+				send("SQLite will be used.");
+				return true;
+			}
 		}
 		
 		if (sqtype.equals(SQLType.MySQL)){
-			this.mysql = new MySQL(log, "[WordRank]", 
+			this.mysql = new MySQL(this, 
 					cfg.getString("sql-config.hostname"),
 					cfg.getString("sql-config.portnumber"),
 					cfg.getString("sql-config.database"),
 					cfg.getString("sql-config.username"),
 					cfg.getString("sql-config.password"));
-			mysql.open();
-			mysql.createTable(Query.CREATE_TABLE_IF_NOT_EXISTS.value());
-			send("MySQL will be used.");
+			send("Checking tables..");
+			if (!mysql.tableExists("wordrank")){
+				send("Table 'wordrank' not found. Creating..");
+				mysql.createTable(Query.CREATE_TABLE_IF_NOT_EXISTS);
+				send("Table 'wordrank' created!");
+				send("MySQL will be used.");
+				return true;
+			}else{
+				send("Table 'wordrank' found.");
+				send("MySQL will be used.");
+				return true;
+			}
 		}
 		
 		if (sqtype.equals(SQLType.Unknown)){
 			sendErr("Config is set to the unknown SQLType '"+config.sqlType()+"' WordRank will now disable.");
+			this.setEnabled(false);
 			return false;
 		}
-		this.saveConfig();
-		return true;
+		send("There appears to be a deep problem here..");
+		return false;
 	}
 	
 	private boolean setupPermissions() {
@@ -121,11 +135,13 @@ public class WordRank extends JavaPlugin {
 	    if (bpermEnabled && !pexEnabled && !perms.equals(Perms.bPermissions)){
 	    	send("bPermissions is enabled, and PEX is not detected, however the config has PEX selected. Now changing selection to bPermissions.");
 	    	this.getConfig().set("perm-plugin", "bPermissions");
+	    	this.saveConfig();
 	    }
 	    
 	    if (!bpermEnabled && pexEnabled && !perms.equals(Perms.PEX)){
 	    	send("PEX is enabled, and bPermissions is not detected, however the config has bPermissions selected. Now changing selection to PEX.");
 	    	this.getConfig().set("perm-plugin", "PEX");
+	    	this.saveConfig();
 	    }
 	    
 	    perms = config.getPerms();
@@ -159,28 +175,20 @@ public class WordRank extends JavaPlugin {
 	    	this.setEnabled(false);
 	    	return false;
 	    }
-	    this.saveConfig();	    
 	    if (config.getPerms().equals(Perms.bPermissions)) send("bPermissions will be used.");
 	    if (config.getPerms().equals(Perms.PEX)) send("PEX will be used.");
 	    return true;
 	}
 	
 	private boolean checkRedeemType(){
-		Config config = new Config(this);
+		Config config = new Config(this);		
+		redeemtype = config.getRedeemType();
 		
-		if (config.getRedeemType().equals(RedeemType.Chat)){
-			redeemtype = RedeemType.Chat;
-		}		
-		else if (config.getRedeemType().equals(RedeemType.Command)){
-			redeemtype = RedeemType.Command;
-		}
-		
-		if (config.getRedeemType().equals(RedeemType.Unknown)){
+		if (redeemtype.equals(RedeemType.Unknown)){
 			sendErr("Config is set to the unknown redeem type '"+config.redeemType()+"' WordRank will now disable.");
 			this.setEnabled(false);
 			return false;
 		}
-		this.saveConfig();
 		return true;
 	}
 	

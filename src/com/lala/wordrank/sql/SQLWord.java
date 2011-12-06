@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import lib.PatPeter.SQLibrary.MySQL;
-import lib.PatPeter.SQLibrary.SQLite;
-
 import org.bukkit.ChatColor;
 
 import com.lala.wordrank.Word;
@@ -53,13 +50,13 @@ public class SQLWord {
 				con.setAutoCommit(true);
 				return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been successfully added!");
 			} catch (SQLException e){
-				plugin.sendErr("Error while adding the word "+word.getName()+" to the database. Error message: "+e.getMessage()+ " ERROR CODE: "+e.getErrorCode());
+				plugin.sendErr("Error while adding the word '"+word.getName()+"' to the database. Error message: "+e.getMessage()+ " ERROR CODE: "+e.getErrorCode());
 				e.printStackTrace();
-				return String.valueOf(ChatColor.RED + "Error adding the word "+ChatColor.GOLD+word.getName()+ChatColor.RED+". Please check the console for more info.");
+				return String.valueOf(ChatColor.RED + "Error adding the word '"+ChatColor.GOLD+word.getName()+ChatColor.RED+"' Please check the console for more info.");
 			} catch (Exception e){
 				plugin.sendErr("Unknown error while adding the word "+word.getName()+" to the database. Stacktrace:");
 				e.printStackTrace();
-				return String.valueOf(ChatColor.RED + "Error adding the word "+ChatColor.GOLD+word.getName()+ChatColor.RED+". Please check the console for more info.");
+				return String.valueOf(ChatColor.RED + "Error adding the word '"+ChatColor.GOLD+word.getName()+ChatColor.RED+"' Please check the console for more info.");
 			}
 		}
 	}
@@ -68,12 +65,14 @@ public class SQLWord {
 		if (!wordExists()){
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" does not exist!");
 		}else{
+			ResultSet rs = null;
 			if (sqltype.equals(SQLType.SQLite))
-				sqlite.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
+				rs = sqlite.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
 			
 			if (sqltype.equals(SQLType.MySQL))
-				mysql.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
-			
+				rs = mysql.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
+			if (rs.equals(null))
+				return String.valueOf(ChatColor.RED+"Error occured while deleting the word '"+word.getName()+"' Please check console for more info.");
 			return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been deleted.");
 		}
 	}
