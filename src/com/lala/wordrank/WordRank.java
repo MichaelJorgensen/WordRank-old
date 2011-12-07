@@ -1,5 +1,13 @@
 package com.lala.wordrank;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
@@ -9,11 +17,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import com.lala.wordrank.Listeners.PlayerListen;
 import com.lala.wordrank.misc.PermHandle;
 import com.lala.wordrank.misc.Perms;
 import com.lala.wordrank.misc.RedeemType;
@@ -36,17 +47,30 @@ public class WordRank extends JavaPlugin {
 	
 	public boolean bpermEnabled = false;
 	public boolean pexEnabled = false;
+	public boolean update = false;
 	
 	public Perms perms = Perms.Unknown;
 	public RedeemType redeemtype = RedeemType.Unknown;
 	public SQLType sqtype = SQLType.Unknown;
 	
+	private Config config;
+	private PluginDescriptionFile desc;
+	private PluginManager pm;
+	
 	public void onEnable(){
-		getServer().getPluginManager().registerEvent(Type.PLAYER_CHAT, new ChatListen(this), Priority.Normal, this);		
+		this.config = new Config(this);
+		this.desc = this.getDescription();
+		this.pm = this.getServer().getPluginManager();
+		
+		pm.registerEvent(Type.PLAYER_CHAT, new PlayerListen(this), Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_JOIN, new PlayerListen(this), Priority.Normal, this);
+		
+		if (config.getCheckForUpdates()) if (checkForUpdate()) send("New update for WordRank!");
 		if (!setupSQL()) return;
 		if (!setupPermissions()) return;
 		if (!checkRedeemType()) return;
-		send("is now enabled, version: "+this.getDescription().getVersion());
+		
+		send("is now enabled, version: "+desc.getVersion());
 	}
 	
 	public void onDisable(){
@@ -59,7 +83,6 @@ public class WordRank extends JavaPlugin {
 	
 	private boolean setupSQL(){
 		send("Setting up SQL support");
-		Config config = new Config(this);
 		FileConfiguration cfg = this.getConfig();
 		sqtype = config.getSQLType();
 		
@@ -111,7 +134,6 @@ public class WordRank extends JavaPlugin {
 	
 	private boolean setupPermissions() {
 		send("Checking permission plugins");
-		Config config = new Config(this);
 		if (getServer().getPluginManager().isPluginEnabled("bPermissions")){
 	    	bperm = Permissions.getWorldPermissionsManager();
 	    	bpermEnabled = true;
@@ -181,7 +203,6 @@ public class WordRank extends JavaPlugin {
 	}
 	
 	private boolean checkRedeemType(){
-		Config config = new Config(this);		
 		redeemtype = config.getRedeemType();
 		
 		if (redeemtype.equals(RedeemType.Unknown)){
@@ -190,6 +211,29 @@ public class WordRank extends JavaPlugin {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean checkForUpdate(){
+		String ver = null;
+		try {
+			URL url = new URL("http://www.craftmod.net/jar/WordRank/version.txt");
+			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+			ver = br.readLine();
+			br.close();
+		} catch (MalformedURLException e){
+			sendErr("MalformedURLException while checking for update at: "+getClass().getPackage().getName());
+			e.printStackTrace();
+		} catch (IOException e){
+			sendErr("IOException while checking for update at: "+getClass().getPackage().getName());
+			e.printStackTrace();
+		}
+		if (ver.equals(null))
+			return false;
+		else if (ver.equals(desc.getVersion()) || Double.parseDouble(ver) <= Double.parseDouble(desc.getVersion()))
+			return false;
+		else
+			this.update = true;
+			return true;			
 	}
 	
 	public void send(String message){
@@ -337,6 +381,37 @@ public class WordRank extends JavaPlugin {
 					sender.sendMessage(ChatColor.AQUA+"/wordrank words");
 					return true;
 				}
+			}else{
+				sender.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
+				return true;
+			}
+		}
+		else if (args[0].equalsIgnoreCase("update")){
+			if (sender.hasPermission("WordRank.update")){
+				if (!update){
+					sender.sendMessage(ChatColor.RED+"No update available.");
+					return true;
+				}
+				sender.sendMessage(ChatColor.GOLD+"Updating WordRank.. (this may take a few moments)");
+				try {
+					BufferedInputStream in = new BufferedInputStream(new URL("http://www.craftmod.net/jar/WordRank/latest/WordRank.jar").openStream());
+					FileOutputStream fos = new FileOutputStream(new File("plugins/WordRank.jar"));
+					
+					byte d[] = new byte[1024];
+					int count;
+					while ((count = in.read(d, 0, 1024)) != -1)
+						fos.write(d, 0, count);
+					in.close();
+					fos.close();
+				} catch (MalformedURLException e){
+					sender.sendMessage(ChatColor.DARK_RED+"Error while downloading file. Please check the console for more info.");
+					e.printStackTrace();
+				} catch (IOException e){
+					sender.sendMessage(ChatColor.DARK_RED+"Error while downloading file. Please check the console for more info.");
+					e.printStackTrace();
+				}
+				sender.sendMessage(ChatColor.GREEN+"The new version of WordRank will be ready to use next server reload or restart.");
+				return true;
 			}else{
 				sender.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
 				return true;

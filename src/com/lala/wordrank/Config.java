@@ -45,6 +45,10 @@ public class Config {
 			return SQLType.Unknown;
 	}
 	
+	public boolean getCheckForUpdates(){
+		return yml.getBoolean("check-for-updates");
+	}
+	
 	public String permPlugin(){
 		return yml.getString("perm-plugin");
 	}

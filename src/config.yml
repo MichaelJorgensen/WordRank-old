@@ -4,6 +4,7 @@
 # MySQL: remote database usually hosted on another server such as a website
 # SQLite: for most users, this is a locally stored database without the hassel of setting up MySQL
 # If SQLite is selected, IGNORE sql-config
+check-for-updates: true
 perm-plugin: bPermissions
 perm-options: [bPermissions, PEX]
 sql-config:

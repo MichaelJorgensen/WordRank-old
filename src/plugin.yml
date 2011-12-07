@@ -18,6 +18,7 @@ permissions:
             WordRank.remove: true
             WordRank.say: true
             WordRank.wordlist: true
+            WordRank.update: true
     WordRank.add:
         description: Allows you to add a word
         default: false
@@ -29,4 +30,7 @@ permissions:
         default: false
     WordRank.wordlist:
         description: Allows you to view a list of words
+        default: false
+    WordRank.update:
+        description: Alerts the user to an update to WordRank and allows them to apply it
         default: false

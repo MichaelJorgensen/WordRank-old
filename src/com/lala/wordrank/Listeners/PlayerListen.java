@@ -1,21 +1,25 @@
-package com.lala.wordrank;
+package com.lala.wordrank.Listeners;
 
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 
+import com.lala.wordrank.Config;
+import com.lala.wordrank.Word;
+import com.lala.wordrank.WordRank;
 import com.lala.wordrank.misc.PermHandle;
 import com.lala.wordrank.misc.RedeemType;
 import com.lala.wordrank.sql.SQLWord;
 
-public class ChatListen extends PlayerListener{
+public class PlayerListen extends PlayerListener{
 
 	private WordRank plugin;
 	
-	public ChatListen(WordRank plugin){
+	public PlayerListen(WordRank plugin){
 		this.plugin = plugin;
 	}
 	
@@ -46,5 +50,13 @@ public class ChatListen extends PlayerListener{
 		}else{
 			return;
 		}
+	}
+	
+	@Override
+	public void onPlayerJoin(PlayerJoinEvent event){
+		Player player = event.getPlayer();
+		if (player.hasPermission("WordRank.update"))
+			if (plugin.update)
+				player.sendMessage(ChatColor.GREEN+"Update for WordRank availabe! Use '/wordrank update' to update!");
 	}
 }
