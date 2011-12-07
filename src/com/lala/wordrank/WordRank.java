@@ -261,18 +261,20 @@ public class WordRank extends JavaPlugin {
 		if (args.length == 0){
 			if (redeemtype.equals(RedeemType.Chat)){
 				sender.sendMessage(ChatColor.DARK_RED+"|--WordRank Commands--|");
-				sender.sendMessage(ChatColor.GOLD+"/wordrank add [word] [group]");
-				sender.sendMessage(ChatColor.GOLD+"/wordrank remove [word]");
-				sender.sendMessage(ChatColor.GOLD+"/wordrank words");
+				sender.sendMessage(ChatColor.GOLD+"/wr add [word] [group]");
+				sender.sendMessage(ChatColor.GOLD+"/wr remove [word]");
+				sender.sendMessage(ChatColor.GOLD+"/wr update");
+				sender.sendMessage(ChatColor.GOLD+"/wr words");
 				sender.sendMessage(ChatColor.YELLOW+"To redeem a group, simply type in-chat the word!");
 				return true;
 			}
 			if (redeemtype.equals(RedeemType.Command)){
 				sender.sendMessage(ChatColor.DARK_RED+"|--WordRank Commands--|");
-				sender.sendMessage(ChatColor.GOLD+"/wordrank add [word] [group]");
-				sender.sendMessage(ChatColor.GOLD+"/wordrank remove [word]");
-				sender.sendMessage(ChatColor.GOLD+"/wordrank redeem [word]");
-				sender.sendMessage(ChatColor.GOLD+"/wordrank words");
+				sender.sendMessage(ChatColor.GOLD+"/wr add [word] [group]");
+				sender.sendMessage(ChatColor.GOLD+"/wr remove [word]");
+				sender.sendMessage(ChatColor.GOLD+"/wr redeem [word]");
+				sender.sendMessage(ChatColor.GOLD+"/wr update");
+				sender.sendMessage(ChatColor.GOLD+"/wr words");
 				sender.sendMessage(ChatColor.YELLOW+"To redeem a group, use /wordrank redeem [word]");
 				return true;
 			}
