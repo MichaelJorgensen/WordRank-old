@@ -229,7 +229,7 @@ public class WordRank extends JavaPlugin {
 		}
 		if (ver.equals(null))
 			return false;
-		else if (ver.equals(desc.getVersion()) || Double.parseDouble(ver) <= Double.parseDouble(desc.getVersion()))
+		else if (ver.equals(desc.getVersion()))
 			return false;
 		else
 			this.update = true;
@@ -309,7 +309,7 @@ public class WordRank extends JavaPlugin {
 								return true;
 							//}
 						}else{
-							player.sendMessage(ChatColor.RED+"That word doesn't exist!");
+							player.sendMessage("The word "+ChatColor.GOLD+args[1]+ChatColor.RED+" does not exist!");
 							return true;
 						}
 					}else{
@@ -388,7 +388,7 @@ public class WordRank extends JavaPlugin {
 		}
 		else if (args[0].equalsIgnoreCase("update")){
 			if (sender.hasPermission("WordRank.update")){
-				if (!update){
+				if (!checkForUpdate()){
 					sender.sendMessage(ChatColor.RED+"No update available.");
 					return true;
 				}
