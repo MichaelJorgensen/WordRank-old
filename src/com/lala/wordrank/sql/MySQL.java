@@ -135,15 +135,20 @@ public class MySQL extends SQLAPI{
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery("SELECT * FROM "+tablename);
 			
-			if (!rs.equals(null))
+			if (!rs.equals(null)){
 				return true;
-			else
+			}else{
 				return false;
+			}
 		} catch (SQLException e){
-			sendErr("SQLException while checking if a table exists with MySQL in: "+getClass().getPackage().getName());
-			sendErr("Query: SELECT * FROM "+tablename);
-			e.printStackTrace();
-			return false;
+			if (e.getMessage().contains("doesn't exist")){
+				return false;
+			}else{
+				sendErr("SQLException while checking if a table exists with MySQL in: "+getClass().getPackage().getName());
+				sendErr("Query: SELECT * FROM "+tablename);
+				e.printStackTrace();
+				return false;
+			}
 		}
 	}
 	

@@ -1,6 +1,7 @@
 package com.lala.wordrank.sql;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -29,7 +30,18 @@ public class SQLite extends SQLAPI{
 		super(plugin);
 		this.dbname = dbname;
 		this.pathloc = pathloc;
-		this.sqlFile = new File(pathloc+dbname+".db");
+		File f = new File(pathloc);
+		if (!f.exists())
+			f.mkdir();
+		this.sqlFile = new File(f.getAbsolutePath()+File.separator+dbname+".db");
+		if (!sqlFile.exists()){
+			try {
+				sqlFile.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		this.open();
 	}
 	
@@ -38,7 +50,6 @@ public class SQLite extends SQLAPI{
 		ResultSet rs = null;
 		try {
 			st = con.createStatement();
-			rs = st.executeQuery("SELECT CURTIME()");
 			
 			if (query.toLowerCase().contains("delete")){
 				st.executeUpdate(query);
@@ -49,7 +60,7 @@ public class SQLite extends SQLAPI{
 			}
 		} catch (SQLException e){
 			sendErr("SQLException while using SQLite with query in: "+getClass().getPackage().getName());
-			sendErr("Query: "+"SELECT CURTIME() :: "+query);
+			sendErr("Query: "+query);
 			e.printStackTrace();
 		}
 		return null;
@@ -60,7 +71,6 @@ public class SQLite extends SQLAPI{
 		ResultSet rs = null;
 		try {
 			st = con.createStatement();
-			rs = st.executeQuery("SELECT CURTIME()");
 			
 			if (query.value().contains("delete")){
 				st.executeUpdate(query.value());
@@ -71,7 +81,7 @@ public class SQLite extends SQLAPI{
 			}
 		} catch (SQLException e){
 			sendErr("SQLException while using SQLite with query in: "+getClass().getPackage().getName());
-			sendErr("Query: "+"SELECT CURTIME() :: "+query.value());
+			sendErr("Query: "+query.value());
 			e.printStackTrace();
 		}
 		return null;
@@ -82,7 +92,6 @@ public class SQLite extends SQLAPI{
 		ResultSet rs = null;
 		try {
 			st = con.createStatement();
-			rs = st.executeQuery("SELECT CURTIME()");
 			
 			if (query.value().toLowerCase().contains("delete") || extension.toLowerCase().contains("delete")){
 				st.executeUpdate(query.value()+extension);
@@ -93,7 +102,7 @@ public class SQLite extends SQLAPI{
 			}
 		} catch (SQLException e){
 			sendErr("SQLException while using SQLite with query in: "+getClass().getPackage().getName());
-			sendErr("Query: "+"SELECT CURTIME() :: "+query.value()+extension);
+			sendErr("Query: "+query.value()+extension);
 			e.printStackTrace();
 		}
 		return null;
@@ -132,35 +141,51 @@ public class SQLite extends SQLAPI{
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery("SELECT * FROM "+tablename);
 			
-			if (!rs.equals(null))
+			if (!rs.equals(null)){
 				return true;
-			else
+			}else{
 				return false;
+			}
 		} catch (SQLException e){
-			sendErr("SQLException while checking if a table exists with SQLite in: "+getClass().getPackage().getName());
-			sendErr("Query: SELECT * FROM "+tablename);
-			e.printStackTrace();
-			return false;
+			if (e.getMessage().contains("missing database")){
+				return false;
+			}else{
+				sendErr("SQLException while checking if a table exists with SQLite in: "+getClass().getPackage().getName());
+				sendErr("Query: SELECT * FROM "+tablename);
+				e.printStackTrace();
+				return false;
+			}
 		}
 	}
-	private boolean connect(){
+	
+	private Connection startConnection(){
 		try {
-			this.con = DriverManager.getConnection("jdbc:sqlite:"+sqlFile.getAbsolutePath());
-			this.connected = true;
+			return DriverManager.getConnection("jdbc:sqlite:"+sqlFile.getAbsolutePath());
 		} catch (SQLException e){
 			sendErr("SQLException while connecting to SQLite database. Error message: "+e.getMessage()+" ERROR CODE: "+e.getErrorCode());
 			e.printStackTrace();
-			this.con = null;
-			this.connected = false;
 		}
-		return false;
+		return null;
 	}
 	
 	public boolean open(){
-		if (connect())
-			return true;
-		else
+		try {
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e){
+			sendErr("JDBC class not found! :O Inbound errors! :'(");
+			e.printStackTrace();
 			return false;
+		}
+		Connection c = this.startConnection();
+		if (!c.equals(null)){
+			this.con = c;
+			this.connected = true;
+			return true;
+		}else{
+			this.con = null;
+			this.connected = false;
+			return false;
+		}
 	}
 	
 	public boolean close(){
@@ -169,7 +194,7 @@ public class SQLite extends SQLAPI{
 			this.connected = false;
 			return true;
 		} catch (SQLException e){
-			sendErr("SQLException while disconnection from SQLite database. Error message: "+e.getMessage()+" ERROR CODE: "+e.getErrorCode());
+			sendErr("SQLException while disconnecting from SQLite database. Error message: "+e.getMessage()+" ERROR CODE: "+e.getErrorCode());
 			e.printStackTrace();
 		}
 		return false;
