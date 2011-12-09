@@ -19,6 +19,7 @@ permissions:
             WordRank.say: true
             WordRank.wordlist: true
             WordRank.update: true
+            WordRank.help: true
     WordRank.add:
         description: Allows you to add a word
         default: false
@@ -33,4 +34,7 @@ permissions:
         default: false
     WordRank.update:
         description: Alerts the user to an update to WordRank and allows them to apply it
+        default: false
+    WordRank.help:
+        description: Allows you to view the help (/wordrank)
         default: false

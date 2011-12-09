@@ -37,7 +37,7 @@ import com.lala.wordrank.sql.SQLite;
 import de.bananaco.permissions.Permissions;
 import de.bananaco.permissions.worlds.WorldPermissionsManager;
 
-public class WordRank extends JavaPlugin {
+public class WordRank extends JavaPlugin{
 	
 	public WorldPermissionsManager bperm;
 	public PermissionManager pex;
@@ -260,23 +260,33 @@ public class WordRank extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (args.length == 0){
 			if (redeemtype.equals(RedeemType.Chat)){
-				sender.sendMessage(ChatColor.DARK_RED+"|--WordRank Commands--|");
-				sender.sendMessage(ChatColor.GOLD+"/wr add [word] [group]");
-				sender.sendMessage(ChatColor.GOLD+"/wr remove [word]");
-				sender.sendMessage(ChatColor.GOLD+"/wr update");
-				sender.sendMessage(ChatColor.GOLD+"/wr words");
-				sender.sendMessage(ChatColor.YELLOW+"To redeem a group, simply type in-chat the word!");
-				return true;
+				if (sender.hasPermission("WordRank.help")){
+					sender.sendMessage(ChatColor.DARK_RED+"|--WordRank Commands--|");
+					sender.sendMessage(ChatColor.GOLD+"/wr add [word] [group]");
+					sender.sendMessage(ChatColor.GOLD+"/wr remove [word]");
+					sender.sendMessage(ChatColor.GOLD+"/wr update");
+					sender.sendMessage(ChatColor.GOLD+"/wr words");
+					sender.sendMessage(ChatColor.YELLOW+"To redeem a group, simply type in-chat the word!");
+					return true;
+				}else{
+					sender.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
+					return true;
+				}
 			}
 			if (redeemtype.equals(RedeemType.Command)){
-				sender.sendMessage(ChatColor.DARK_RED+"|--WordRank Commands--|");
-				sender.sendMessage(ChatColor.GOLD+"/wr add [word] [group]");
-				sender.sendMessage(ChatColor.GOLD+"/wr remove [word]");
-				sender.sendMessage(ChatColor.GOLD+"/wr redeem [word]");
-				sender.sendMessage(ChatColor.GOLD+"/wr update");
-				sender.sendMessage(ChatColor.GOLD+"/wr words");
-				sender.sendMessage(ChatColor.YELLOW+"To redeem a group, use /wordrank redeem [word]");
-				return true;
+				if (sender.hasPermission("WordRank.help")){
+					sender.sendMessage(ChatColor.DARK_RED+"|--WordRank Commands--|");
+					sender.sendMessage(ChatColor.GOLD+"/wr add [word] [group]");
+					sender.sendMessage(ChatColor.GOLD+"/wr remove [word]");
+					sender.sendMessage(ChatColor.GOLD+"/wr redeem [word]");
+					sender.sendMessage(ChatColor.GOLD+"/wr update");
+					sender.sendMessage(ChatColor.GOLD+"/wr words");
+					sender.sendMessage(ChatColor.YELLOW+"To redeem a group, use /wordrank redeem [word]");
+					return true;
+				}else{
+					sender.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
+					return true;
+				}
 			}
 		}
 		if (args[0].equalsIgnoreCase("redeem")){
@@ -286,7 +296,7 @@ public class WordRank extends JavaPlugin {
 				return true;
 			}
 			if (!(sender instanceof Player)){
-				sender.sendMessage(ChatColor.DARK_RED+"You must be a player to redeem a word!");
+				sender.sendMessage(ChatColor.RED+"You must be a player to redeem a word!");
 			}else{
 				Player player = (Player) sender;
 				if (player.hasPermission("WordRank.say") || player.hasPermission("WordRank."+args[1])){
@@ -338,7 +348,7 @@ public class WordRank extends JavaPlugin {
 					return true;
 				}
 			}else{
-				sender.sendMessage(ChatColor.DARK_RED+"You do not have permission to use this command.");
+				sender.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
 				return true;
 			}
 		}
@@ -401,8 +411,9 @@ public class WordRank extends JavaPlugin {
 					
 					byte d[] = new byte[1024];
 					int count;
-					while ((count = in.read(d, 0, 1024)) != -1)
+					while ((count = in.read(d, 0, 1024)) != -1){
 						fos.write(d, 0, count);
+					}
 					in.close();
 					fos.close();
 				} catch (MalformedURLException e){

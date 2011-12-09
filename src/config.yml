@@ -4,6 +4,9 @@
 # MySQL: remote database usually hosted on another server such as a website
 # SQLite: for most users, this is a locally stored database without the hassel of setting up MySQL
 # If SQLite is selected, IGNORE sql-config
+# Please view the BukkitDev page by going here: http://dev.bukkit.org/server-mods/wordrank/
+# If you have any bugs, issues, stacktraces, etc, please report it as a ticket in the BukkitDev page!
+# It may be a hassel, but it will help the development of this plugin
 check-for-updates: true
 perm-plugin: bPermissions
 perm-options: [bPermissions, PEX]

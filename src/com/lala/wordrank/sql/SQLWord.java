@@ -65,14 +65,16 @@ public class SQLWord {
 		if (!wordExists()){
 			return String.valueOf(ChatColor.RED + "The word "+ChatColor.GOLD+word.getName()+ChatColor.RED+" does not exist!");
 		}else{
-			ResultSet rs = null;
-			if (sqltype.equals(SQLType.SQLite))
-				rs = sqlite.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
-			
-			if (sqltype.equals(SQLType.MySQL))
-				rs = mysql.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
-			if (rs.equals(null))
+			//ResultSet rs = null;
+			if (sqltype.equals(SQLType.SQLite)){
+				sqlite.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
+			}			
+			if (sqltype.equals(SQLType.MySQL)){
+				mysql.query(Query.DELETE_FROM.value()+"name='"+word.getName()+"'");
+			}
+			/*if (rs.equals(null)){
 				return String.valueOf(ChatColor.RED+"Error occured while deleting the word '"+word.getName()+"' Please check console for more info.");
+			}*/
 			return String.valueOf(ChatColor.GREEN + "Word "+ChatColor.GOLD+word.getName()+ChatColor.GREEN+" has been deleted.");
 		}
 	}
