@@ -297,42 +297,33 @@ public class WordRank extends JavaPlugin{
 			}
 			if (!(sender instanceof Player)){
 				sender.sendMessage(ChatColor.RED+"You must be a player to redeem a word!");
-			}else{
-				Player player = (Player) sender;
-				if (player.hasPermission("WordRank.say") || player.hasPermission("WordRank."+args[1])){
-					if (args.length == 2){
-						Word w = new Word(args[1], "unknown");
-						SQLWord sw = new SQLWord(this, w);
-						ArrayList<String> wordlist = sw.getWords();
-						if (wordlist.contains(args[1])){
-							Config config = new Config(this);
-							PermHandle ph = new PermHandle(this, config.getPerms(), player);
-							String groupname = sw.getWordGroup();
-							
-							/*if (ph.getPlayerGroups().contains(groupname)){
-								player.sendMessage(ChatColor.RED+"You are already in the group '"+groupname+"' that this word assigns.");
-								return true;
-							}else{*/
-								w.setGroup(groupname);
-								ph.setGroup(groupname);
-								
-								player.sendMessage(ChatColor.GREEN+"Congrats! You have been promoted to the group "+ChatColor.YELLOW+w.getGroup()+ChatColor.GREEN+"!");
-								send(player.getName()+" has been promoted to "+w.getGroup()+" by WordRank.");
-								return true;
-							//}
-						}else{
-							player.sendMessage("The word "+ChatColor.GOLD+args[1]+ChatColor.RED+" does not exist!");
-							return true;
-						}
+			}
+			Player player = (Player) sender;
+			PermHandle ph = new PermHandle(this, perms, player);
+			if (player.hasPermission("WordRank.say") || player.hasPermission("WordRank."+args[1])){
+				if (args.length == 2){
+					Word w = new Word(args[1], "unknown");
+					SQLWord sw = new SQLWord(this, w);
+					ArrayList<String> wordlist = sw.getWords();
+					if (wordlist.contains(args[1])){
+						String groupname = sw.getWordGroup();
+						w.setGroup(groupname);
+						ph.setGroup(groupname);
+						player.sendMessage(ChatColor.GREEN+"Congrats! You have been promoted to the group "+ChatColor.YELLOW+w.getGroup()+ChatColor.GREEN+"!");
+						send(player.getName()+" has been promoted to "+w.getGroup()+" by WordRank.");
+						return true;
 					}else{
-						player.sendMessage(ChatColor.RED+"Syntax Error, invalid argument length");
-						player.sendMessage(ChatColor.AQUA+"/wordrank redeem [word]");
+						player.sendMessage("The word "+ChatColor.GOLD+args[1]+ChatColor.RED+" does not exist!");
 						return true;
 					}
 				}else{
-					player.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
+					player.sendMessage(ChatColor.RED+"Syntax Error, invalid argument length");
+					player.sendMessage(ChatColor.AQUA+"/wordrank redeem [word]");
 					return true;
 				}
+			}else{
+				player.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
+				return true;
 			}
 		}
 		if (args[0].equalsIgnoreCase("add")){
