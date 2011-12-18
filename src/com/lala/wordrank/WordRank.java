@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -33,6 +34,7 @@ import com.lala.wordrank.sql.Query;
 import com.lala.wordrank.sql.SQLType;
 import com.lala.wordrank.sql.SQLWord;
 import com.lala.wordrank.sql.SQLite;
+import com.platymuus.bukkit.permissions.PermissionsPlugin;
 
 import de.bananaco.permissions.Permissions;
 import de.bananaco.permissions.worlds.WorldPermissionsManager;
@@ -41,17 +43,22 @@ public class WordRank extends JavaPlugin{
 	
 	public WorldPermissionsManager bperm;
 	public PermissionManager pex;
+	public PermissionsPlugin permbuk;
 	
 	public SQLite sqlite;
 	public MySQL mysql;
 	
-	public boolean bpermEnabled = false;
-	public boolean pexEnabled = false;
+	public static HashMap<Perms, Boolean> permplugins;
+	
 	public boolean update = false;
 	
 	public Perms perms = Perms.Unknown;
 	public RedeemType redeemtype = RedeemType.Unknown;
 	public SQLType sqtype = SQLType.Unknown;
+	
+	private boolean bpermEnabled = false;
+	private boolean pexEnabled = false;
+	private boolean permbukkitEnabled = false;
 	
 	private Config config;
 	private PluginDescriptionFile desc;
@@ -134,13 +141,14 @@ public class WordRank extends JavaPlugin{
 	
 	private boolean setupPermissions() {
 		send("Checking permission plugins");
+		permplugins = new HashMap<Perms, Boolean>();
 		if (getServer().getPluginManager().isPluginEnabled("bPermissions")){
 	    	bperm = Permissions.getWorldPermissionsManager();
 	    	bpermEnabled = true;
 	    	send("bPermissions is detected");
 		}else{
-	    	send("bPermissions is not detected");
 	    	bpermEnabled = false;
+	    	send("bPermissions is not detected");
 		}
 	    
 	    if (getServer().getPluginManager().isPluginEnabled("PermissionsEx")){
@@ -148,46 +156,27 @@ public class WordRank extends JavaPlugin{
 	    	pexEnabled = true;
 	    	send("PEX is detected");
 	    }else{
-	    	send("PEX is not detected");
 	    	pexEnabled = false;
+	    	send("PEX is not detected");
 	    }
+	    
+	    if (getServer().getPluginManager().isPluginEnabled("PermissionsBukkit")){
+	    	permbuk = (PermissionsPlugin) getServer().getPluginManager().getPlugin("PermissionsBukkit");
+	    	permbukkitEnabled = true;
+	    	send("PermissionsBukkit is detected");
+	    }else{
+	    	permbukkitEnabled = false;
+	    	send("PermissionsBukkit is not detected");
+	    }
+	    
+	    permplugins.put(Perms.bPermissions, bpermEnabled);
+	    permplugins.put(Perms.PEX, pexEnabled);
+	    permplugins.put(Perms.Permissions_Bukkit, permbukkitEnabled);
 	    
 	    perms = config.getPerms();
 	    
-	    if (bpermEnabled && !pexEnabled && !perms.equals(Perms.bPermissions)){
-	    	send("bPermissions is enabled, and PEX is not detected, however the config has PEX selected. Now changing selection to bPermissions.");
-	    	this.getConfig().set("perm-plugin", "bPermissions");
-	    	this.saveConfig();
-	    }
-	    
-	    if (!bpermEnabled && pexEnabled && !perms.equals(Perms.PEX)){
-	    	send("PEX is enabled, and bPermissions is not detected, however the config has bPermissions selected. Now changing selection to PEX.");
-	    	this.getConfig().set("perm-plugin", "PEX");
-	    	this.saveConfig();
-	    }
-	    
-	    perms = config.getPerms();
-	    
-	    if (!bpermEnabled && !pexEnabled){
-	    	sendErr("No compatible permission plugins found. WordRank will now disable.");
-	    	this.setEnabled(false);
-	    	return false;
-	    }
-	    
-	    if (perms.equals(Perms.bPermissions) && !bpermEnabled){
-	    	sendErr("Config is set to bPermissions, however bPermissions is not detected. WordRank will now disable.");
-	    	this.setEnabled(false);
-	    	return false;
-	    }
-	    
-	    if (perms.equals(Perms.PEX) && !pexEnabled){
-	    	sendErr("Config is set to PEX, however PEX is not detected. WordRank will now disable.");
-	    	this.setEnabled(false);
-	    	return false;
-	    }
-	    
-	    if (perms.equals(Perms.GroupManager)){
-	    	sendErr("Config is set to GroupManager, however GroupManager is not supported yet. WordRank will now disable.");
+	    if (!permplugins.get(perms)){
+	    	sendErr("Config is set to "+config.permPlugin()+" but it is not detected. WordRank will now disable.");
 	    	this.setEnabled(false);
 	    	return false;
 	    }
@@ -197,8 +186,9 @@ public class WordRank extends JavaPlugin{
 	    	this.setEnabled(false);
 	    	return false;
 	    }
-	    if (config.getPerms().equals(Perms.bPermissions)) send("bPermissions will be used.");
-	    if (config.getPerms().equals(Perms.PEX)) send("PEX will be used.");
+	    if (perms.equals(Perms.bPermissions)) send("bPermissions will be used.");
+	    if (perms.equals(Perms.PEX)) send("PEX will be used.");
+	    if (perms.equals(Perms.Permissions_Bukkit)) send("PermissionsBukkit will be used.");
 	    return true;
 	}
 	
@@ -221,10 +211,8 @@ public class WordRank extends JavaPlugin{
 			ver = br.readLine();
 			br.close();
 		} catch (MalformedURLException e){
-			sendErr("MalformedURLException while checking for update at: "+getClass().getPackage().getName());
 			e.printStackTrace();
 		} catch (IOException e){
-			sendErr("IOException while checking for update at: "+getClass().getPackage().getName());
 			e.printStackTrace();
 		}
 		if (ver.equals(null))

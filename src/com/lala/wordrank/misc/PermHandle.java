@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionGroup;
 
 import com.lala.wordrank.WordRank;
+import com.platymuus.bukkit.permissions.Group;
 
 import de.bananaco.permissions.interfaces.PermissionSet;
 
@@ -38,6 +39,11 @@ public class PermHandle {
 			plugin.pex.getUser(player).setGroups(groups);
 			return;
 		}
+		
+		if (perms.equals(Perms.Permissions_Bukkit)){
+			plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "permissions player setgroup "+player.getName()+" "+groupname);
+			return;
+		}
 	}
 	
 	public ArrayList<String> getPlayerGroups(){
@@ -53,6 +59,15 @@ public class PermHandle {
 			ArrayList<String> g = new ArrayList<String>();
 			for (int i = 0; i < gl.length; i++){
 				g.add(gl[i].getName());
+			}
+			return g;
+		}
+		
+		if (perms.equals(Perms.Permissions_Bukkit)){
+			List<Group> gl = plugin.permbuk.getPlayerInfo(player.getName()).getGroups();
+			ArrayList<String> g = new ArrayList<String>();
+			for (int z = 0; z < gl.size(); z++){
+				g.add(gl.get(z).getName());
 			}
 			return g;
 		}

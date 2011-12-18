@@ -9,7 +9,7 @@
 # It may be a hassel, but it will help the development of this plugin
 check-for-updates: true
 perm-plugin: bPermissions
-perm-options: [bPermissions, PEX]
+perm-options: [bPermissions, PEX, PermissionsBukkit]
 sql-config:
  hostname: localhost
  portnumber: '3306'

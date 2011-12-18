@@ -38,7 +38,6 @@ public class PlayerListen extends PlayerListener{
 				PermHandle ph = new PermHandle(plugin, config.getPerms(), player);
 				String groupname = sw.getWordGroup();
 				
-				//if (ph.getPlayerGroups().contains(groupname)) return;
 				w.setGroup(groupname);
 				ph.setGroup(groupname);
 				

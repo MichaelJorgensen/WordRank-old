@@ -23,6 +23,8 @@ public class Config {
 			return Perms.PEX;
 		else if (permPlugin().equalsIgnoreCase("GroupManager"))
 			return Perms.GroupManager;
+		else if (permPlugin().equalsIgnoreCase("PermissionsBukkit"))
+			return Perms.Permissions_Bukkit;
 		else
 			return Perms.Unknown;
 	}
